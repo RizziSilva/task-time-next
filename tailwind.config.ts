@@ -9,11 +9,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        'red-base': '#D65C56',
+        'red-darken': '#BC4B45',
         'background-base': '#E2D9C2',
       },
       spacing: {
         '22': '352px',
         '19': '300px',
+      },
+      lineHeight: {
+        full: '100%',
       },
     },
   },
