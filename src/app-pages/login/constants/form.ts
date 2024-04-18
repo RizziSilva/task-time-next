@@ -1,3 +1,5 @@
+import { FormStateType } from '../types';
+
 export const FIELDS = {
   EMAIL: {
     name: 'email',
@@ -7,4 +9,9 @@ export const FIELDS = {
     name: 'password',
     label: 'Password',
   },
+};
+
+export const INITIAL_STATE = {
+  password: '',
+  email: '',
 };
