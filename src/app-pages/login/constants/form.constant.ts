@@ -1,5 +1,3 @@
-import { FormStateType } from '../types';
-
 export const FIELDS = {
   EMAIL: {
     name: 'email',
