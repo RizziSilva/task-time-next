@@ -10,6 +10,20 @@ import { handleLoginAction } from '../../useLogin.hook';
 
 export function LoginForm() {
   const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
+  const { errorMessage } = state;
+
+  function getErrorMessage() {
+    const { errorMessage } = state;
+    const hasError = !!errorMessage;
+
+    if (!hasError) return null;
+
+    return (
+      <div className='my-4 flex place-content-center text-justify'>
+        <span className='text-red-500'>{errorMessage}</span>
+      </div>
+    );
+  }
 
   return (
     <form
@@ -17,6 +31,7 @@ export function LoginForm() {
       className='flex h-full w-full flex-col items-center justify-center px-12'
     >
       <Image src={FullLogo} alt='Site logo' />
+      {getErrorMessage()}
       <Input
         id={FIELDS.EMAIL.name}
         name={FIELDS.EMAIL.name}

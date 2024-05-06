@@ -1,8 +1,11 @@
 'use server';
 
-import { FormStateType } from '@types';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { FormStateType, Tokens } from '@types';
 import { AuthService } from '@services';
 import { getErrorMessage } from '@utils';
+import { COOKIES_KEYS, ROUTES } from '@constants';
 import { FIELDS } from './constants';
 
 export async function handleLoginAction(
@@ -14,13 +17,17 @@ export async function handleLoginAction(
     const email = formData.get(FIELDS.EMAIL.name) as string;
     const authService: AuthService = new AuthService();
     const response = await authService.login({ email, password });
-    console.log(response);
-    // Salvar os tokens da response nos cookies? Pesquisar qual a melhor maneira de salvar tokens com o next.
-
-    return { email, password };
+    const tokens: Tokens = {
+      accessToken: response.access_token,
+      refreshToken: response.refresh_token,
+    };
+    cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
+    cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
   } catch (error) {
     const errorMessage: string = getErrorMessage(error, 'Mensagem de erro padrão');
 
     return { errorMessage };
   }
+
+  redirect(ROUTES.HOME);
 }

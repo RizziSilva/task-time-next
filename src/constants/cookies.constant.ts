@@ -1,0 +1,4 @@
+export const COOKIES_KEYS = {
+  ACCESS: 'ACCESS_TOKEN',
+  REFRESH: 'REFRESH_TOKEN',
+};
