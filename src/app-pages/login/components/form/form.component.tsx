@@ -10,11 +10,10 @@ import { handleLoginAction } from '../../useLogin.hook';
 
 export function LoginForm() {
   const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
-  const { errorMessage } = state;
 
   function getErrorMessage() {
     const { errorMessage } = state;
-    const hasError = !!errorMessage;
+    const hasError: boolean = !!errorMessage;
 
     if (!hasError) return null;
 
@@ -36,15 +35,16 @@ export function LoginForm() {
         id={FIELDS.EMAIL.name}
         name={FIELDS.EMAIL.name}
         label={FIELDS.EMAIL.label}
+        type={FIELDS.EMAIL.type}
         className='mb-7 mt-8'
       />
-      <Input id={FIELDS.PASSWORD.name} name={FIELDS.PASSWORD.name} label={FIELDS.PASSWORD.label} />
-      <Button
-        text='Login'
-        type='submit'
-        onClick={() => console.log('submit')}
-        className='mb-1 mt-12'
+      <Input
+        id={FIELDS.PASSWORD.name}
+        name={FIELDS.PASSWORD.name}
+        label={FIELDS.PASSWORD.label}
+        type={FIELDS.PASSWORD.type}
       />
+      <Button text='Login' type='submit' className='mb-1 mt-12' />
       <Link href={''}>
         <span className='hover:cursor-pointer'>Ou crie sua conta!</span>
       </Link>
