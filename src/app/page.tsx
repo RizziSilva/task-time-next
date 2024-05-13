@@ -1,3 +1,3 @@
-export default function Home() {
-  return <span>Initial Config</span>;
-}
+import { HomePage } from '@pages';
+
+export default HomePage;
