@@ -21,6 +21,7 @@ export async function handleLoginAction(
       accessToken: response.access_token,
       refreshToken: response.refresh_token,
     };
+
     cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
     cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
   } catch (error) {
