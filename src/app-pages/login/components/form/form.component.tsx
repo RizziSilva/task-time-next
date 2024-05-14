@@ -26,6 +26,7 @@ export function LoginForm() {
 
   return (
     <form
+      role='form'
       action={formAction}
       className='flex h-full w-full flex-col items-center justify-center px-12'
     >
