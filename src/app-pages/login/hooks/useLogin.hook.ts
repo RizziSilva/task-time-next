@@ -6,7 +6,7 @@ import { FormStateType, Tokens } from '@types';
 import { AuthService } from '@services';
 import { getErrorMessage } from '@utils';
 import { COOKIES_KEYS, ROUTES } from '@constants';
-import { FIELDS } from './constants';
+import { FIELDS } from '../constants';
 
 export async function handleLoginAction(
   state: FormStateType,
