@@ -1,26 +1,24 @@
-import { AuthService } from '@/services';
+import { AuthService } from '@services';
+import { FormStateType } from '@types';
 import { handleLoginAction } from './useLogin.hook';
-import { FormStateType } from '@/types';
+import { DEFAULT_LOGIN_ERROR_MESSAGE } from '../constants';
+
+jest.mock('@services');
 
 describe('UseLogin hook tests', () => {
-  let authService: AuthService;
-
-  beforeAll(() => {
-    authService = new AuthService();
-  });
-
   describe('handleLoginAction tests', () => {
-    it('Return default error message on login error', () => {
+    it('Return default error message on login error', async () => {
       const formState: FormStateType = {};
       const formData: FormData = new FormData();
+      const expected: FormStateType = { errorMessage: DEFAULT_LOGIN_ERROR_MESSAGE };
 
-      jest.spyOn(authService, 'login').mockRejectedValue('');
+      jest.spyOn(AuthService.prototype, 'login').mockImplementation(() => {
+        throw new Error();
+      });
 
-      const act: Function = async () => {
-        await handleLoginAction(formState, formData);
-      };
+      const result: FormStateType = await handleLoginAction(formState, formData);
 
-      expect(act).rejects.toThrow();
+      expect(result).toEqual(expected);
     });
   });
 });

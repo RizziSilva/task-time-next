@@ -3,6 +3,7 @@ import { postRequest } from '../request/instance.service';
 
 export class AuthService {
   async login(requestBody: LoginRequestType): Promise<any> {
+    console.log('teste');
     const body: BodyInit = JSON.stringify(requestBody);
     const requestOptions: PostRequestParameters = { url: '/auth/login', body };
     const response: Response = await postRequest(requestOptions);

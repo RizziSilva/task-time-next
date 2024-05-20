@@ -6,7 +6,7 @@ import { FormStateType, Tokens } from '@types';
 import { AuthService } from '@services';
 import { getErrorMessage } from '@utils';
 import { COOKIES_KEYS, ROUTES } from '@constants';
-import { FIELDS } from '../constants';
+import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
 export async function handleLoginAction(
   state: FormStateType,
@@ -25,7 +25,7 @@ export async function handleLoginAction(
     cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
     cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
   } catch (error) {
-    const errorMessage: string = getErrorMessage(error, 'Mensagem de erro padrão');
+    const errorMessage: string = getErrorMessage(error, DEFAULT_LOGIN_ERROR_MESSAGE);
 
     return { errorMessage };
   }

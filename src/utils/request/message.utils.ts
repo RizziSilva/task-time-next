@@ -1,7 +1,8 @@
 export function getErrorMessage(error: any, defaultMessage: string): string {
   let message: string = defaultMessage;
+  const hasErrorMessage: boolean = !!error?.message;
 
-  if (error instanceof Error) message = error.message;
+  if (hasErrorMessage) message = error.message;
 
   return message;
 }

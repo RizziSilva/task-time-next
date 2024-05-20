@@ -1,7 +1,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { FormStateType } from '@/types';
+import { FormStateType } from '@types';
 import { LoginForm } from './form.component';
 import * as useLoginHook from '../../hooks/useLogin.hook';
+import { DEFAULT_LOGIN_ERROR_MESSAGE } from '../../constants';
 
 jest.mock('../../useLogin.hook', () => {
   return {
@@ -23,7 +24,7 @@ describe('Login form component tests', () => {
       fireEvent.click(submitButton);
     });
 
-    const errorMessage = await screen.findByText('Mensagem de erro padrão');
+    const errorMessage = await screen.findByText(DEFAULT_LOGIN_ERROR_MESSAGE);
 
     expect(errorMessage).toBeInTheDocument();
     expect(useLoginHook.handleLoginAction).toHaveBeenCalled();
