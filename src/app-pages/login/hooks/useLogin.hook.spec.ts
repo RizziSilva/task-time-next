@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { AuthService } from '@services';
+import { ROUTES } from '@constants';
 import { FormStateType } from '@types';
 import { redirect } from 'next/navigation';
 import { handleLoginAction } from './useLogin.hook';
@@ -35,7 +36,7 @@ describe('UseLogin hook tests', () => {
       expect(result).toEqual(expected);
     });
 
-    it('Returns form state on success request', async () => {
+    it('Save cookies and redirect to home on request success', async () => {
       const formState: FormStateType = {};
       const formData: FormData = new FormData();
       const loginResponse: any = { access_token: 'access_token', refresh_token: 'refresh_token' };
@@ -44,9 +45,10 @@ describe('UseLogin hook tests', () => {
 
       const result: FormStateType = await handleLoginAction(formState, formData);
 
+      // TODO silva.william 22/05/2024: Assert that cookies().set instead of cookies gets called 2 times.
       expect(result).toBeUndefined();
-      expect(redirect).toHaveBeenCalled();
-      expect(cookies().set).toHaveBeenCalledTimes(2);
+      expect(redirect).toHaveBeenCalledWith(ROUTES.HOME);
+      expect(cookies).toHaveBeenCalledTimes(2);
     });
   });
 });

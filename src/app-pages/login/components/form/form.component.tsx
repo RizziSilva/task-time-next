@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useFormState } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Input, Button } from '@components';
@@ -9,7 +9,7 @@ import { INITIAL_STATE, FIELDS } from '../../constants';
 import { handleLoginAction } from '../../hooks/useLogin.hook';
 
 export function LoginForm() {
-  const [state, formAction] = useActionState(handleLoginAction, INITIAL_STATE);
+  const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
 
   function getErrorMessage() {
     const { errorMessage } = state;
