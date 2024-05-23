@@ -15,13 +15,19 @@ describe('Login form component tests', () => {
   it('Render form correctly', async () => {
     render(<LoginForm />);
 
+    const logoImage = await screen.findByAltText('logo', { exact: false });
     const emailInput = await screen.findByRole('textbox', {
       name: FIELDS.EMAIL.label,
     });
     const passwordInput = await screen.findByLabelText(FIELDS.PASSWORD.label);
+    const loginButton = await screen.findByRole('button');
+    const createAccountText = await screen.findByText('crie sua conta!', { exact: false });
 
     expect(passwordInput).toBeInTheDocument();
     expect(emailInput).toBeInTheDocument();
+    expect(loginButton).toBeInTheDocument();
+    expect(createAccountText).toBeInTheDocument();
+    expect(logoImage).toBeInTheDocument();
   });
 
   it('Show error message for invalid login', async () => {
