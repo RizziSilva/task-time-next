@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Input, Button } from '@components';
 import { FullLogo } from '@statics';
 import { INITIAL_STATE, FIELDS } from '../../constants';
-import { handleLoginAction } from '../../useLogin.hook';
+import { handleLoginAction } from '../../hooks/useLogin.hook';
 
 export function LoginForm() {
   const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
