@@ -1,6 +1,6 @@
 import { InputProps } from './types';
 
-export function Input({ className, label, name, id, type }: InputProps) {
+export function Input({ className, label, name, id, type, error }: InputProps) {
   return (
     <div className={`relative w-full ${className}`}>
       <label htmlFor={id} className='absolute bottom-full left-1.5 leading-full'>

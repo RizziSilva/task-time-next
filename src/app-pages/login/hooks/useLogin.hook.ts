@@ -2,8 +2,8 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { SafeParseReturnType, z } from 'zod';
-import { FormStateType, Tokens } from '@types';
+import { ZodIssue, z } from 'zod';
+import { FormStateType, Tokens, FormError } from '@types';
 import { AuthService } from '@services';
 import { getErrorMessage } from '@utils';
 import { COOKIES_KEYS, ROUTES } from '@constants';
@@ -17,35 +17,29 @@ import {
 
 const loginValidation = z
   .object({
+    password: z.string().min(1, { message: REQUIRED_PASSWORD_ERROR_MESSAGE }),
     email: z
-      .string({ required_error: REQUIRED_EMAIL_ERROR_MESSAGE })
+      .string()
+      .min(1, { message: REQUIRED_EMAIL_ERROR_MESSAGE })
       .email({ message: INVALID_EMAIL_ERROR_MESSAGE }),
-    password: z.string({ required_error: REQUIRED_PASSWORD_ERROR_MESSAGE }),
   })
   .required();
 
-function validateFormData(email: string, password: string) {
-  const result = loginValidation.safeParse({ email, password });
-  const hasErrors: boolean = !result.success && !!result.error;
-  let errors: Array<any> = [];
-  console.log({ email, password });
-  if (hasErrors)
-    errors = result.error.errors.map((error) => ({
-      field: error.path[0],
-      errorMessage: error.message,
-    }));
+function validateFormData(email: string, password: string): Object | undefined {
+  const result = loginValidation.safeParse({ password, email });
+  const errors = result?.error?.flatten();
 
-  return errors;
+  return errors?.fieldErrors;
+  // const resultErrors: ZodIssue[] = result?.error?.errors || [];
+
+  // return resultErrors.map(({ path, message }) => ({
+  //   field: path[0],
+  //   message,
+  // }));
 }
 
-export async function handleLoginAction(
-  state: FormStateType,
-  formData: FormData,
-): Promise<FormStateType> {
+async function handleLogin(password: string, email: string) {
   try {
-    const password = formData.get(FIELDS.PASSWORD.name) as string;
-    const email = formData.get(FIELDS.EMAIL.name) as string;
-    console.log(validateFormData(email, password));
     const authService: AuthService = new AuthService();
     const response = await authService.login({ email, password });
     const tokens: Tokens = {
@@ -55,6 +49,23 @@ export async function handleLoginAction(
 
     cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
     cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function handleLoginAction(
+  state: FormStateType,
+  formData: FormData,
+): Promise<FormStateType> {
+  try {
+    const password = formData.get(FIELDS.PASSWORD.name) as string;
+    const email = formData.get(FIELDS.EMAIL.name) as string;
+    const errors: Object | undefined = validateFormData(email, password);
+
+    if (errors) return { email, password, fieldErrors: errors };
+
+    await handleLogin(password, email);
   } catch (error) {
     const errorMessage: string = getErrorMessage(error, DEFAULT_LOGIN_ERROR_MESSAGE);
 
