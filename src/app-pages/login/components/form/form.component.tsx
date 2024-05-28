@@ -7,7 +7,7 @@ import { FormError } from '@types';
 import { Input, Button } from '@components';
 import { FullLogo } from '@statics';
 import { handleLoginAction } from '../../hooks/useLogin.hook';
-import { INITIAL_STATE, FIELDS } from '../../constants';
+import { INITIAL_STATE, FIELDS, LOGIN_FIELDS } from '../../constants';
 
 export function LoginForm() {
   const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
@@ -26,28 +26,23 @@ export function LoginForm() {
   }
 
   function renderFormFields() {
-    const fieldErrors: Object | undefined = state.fieldErrors;
+    return LOGIN_FIELDS.map((field) => {
+      const { label, name, type, className } = field;
+      const fieldError: FormError | undefined = state.fieldErrors?.find(
+        ({ field }) => field === name,
+      );
 
-    return (
-      <>
+      return (
         <Input
-          id={FIELDS.EMAIL.name}
-          name={FIELDS.EMAIL.name}
-          label={FIELDS.EMAIL.label}
-          type={FIELDS.EMAIL.type}
-          error={fieldErrors[FIELDS.EMAIL.name]}
-          className='mb-7 mt-8'
+          id={name}
+          name={name}
+          label={label}
+          type={type}
+          error={fieldError}
+          className={className}
         />
-        <Input
-          id={FIELDS.PASSWORD.name}
-          name={FIELDS.PASSWORD.name}
-          label={FIELDS.PASSWORD.label}
-          type={FIELDS.PASSWORD.type}
-          error={fieldErrors?[FIELDS.PASSWORD.name][0]}
-
-        />
-      </>
-    );
+      );
+    });
   }
 
   return (

@@ -25,17 +25,14 @@ const loginValidation = z
   })
   .required();
 
-function validateFormData(email: string, password: string): Object | undefined {
+function validateFormData(email: string, password: string): Array<FormError> {
   const result = loginValidation.safeParse({ password, email });
-  const errors = result?.error?.flatten();
+  const resultErrors: ZodIssue[] = result?.error?.errors || [];
 
-  return errors?.fieldErrors;
-  // const resultErrors: ZodIssue[] = result?.error?.errors || [];
-
-  // return resultErrors.map(({ path, message }) => ({
-  //   field: path[0],
-  //   message,
-  // }));
+  return resultErrors.map(({ path, message }) => ({
+    field: path[0],
+    message,
+  }));
 }
 
 async function handleLogin(password: string, email: string) {
@@ -61,7 +58,7 @@ export async function handleLoginAction(
   try {
     const password = formData.get(FIELDS.PASSWORD.name) as string;
     const email = formData.get(FIELDS.EMAIL.name) as string;
-    const errors: Object | undefined = validateFormData(email, password);
+    const errors: Array<FormError> = validateFormData(email, password);
 
     if (errors) return { email, password, fieldErrors: errors };
 
