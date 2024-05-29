@@ -17,9 +17,11 @@ import {
 
 const loginValidation = z
   .object({
-    password: z.string().min(1, { message: REQUIRED_PASSWORD_ERROR_MESSAGE }),
+    password: z
+      .string({ invalid_type_error: REQUIRED_PASSWORD_ERROR_MESSAGE })
+      .min(1, { message: REQUIRED_PASSWORD_ERROR_MESSAGE }),
     email: z
-      .string()
+      .string({ invalid_type_error: REQUIRED_EMAIL_ERROR_MESSAGE })
       .min(1, { message: REQUIRED_EMAIL_ERROR_MESSAGE })
       .email({ message: INVALID_EMAIL_ERROR_MESSAGE }),
   })
@@ -60,7 +62,7 @@ export async function handleLoginAction(
     const email = formData.get(FIELDS.EMAIL.name) as string;
     const errors: Array<FormError> = validateFormData(email, password);
 
-    if (errors) return { email, password, fieldErrors: errors };
+    if (errors.length) return { email, password, fieldErrors: errors };
 
     await handleLogin(password, email);
   } catch (error) {

@@ -1,6 +1,7 @@
 {
   "name": "task-time-next",
   "version": "0.1.0",
+  "module": "commonjs",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
@@ -14,7 +15,7 @@
     "next": "14.2.1",
     "react": "19.0.0-beta-9d76c954cf-20240510",
     "react-dom": "19.0.0-beta-9d76c954cf-20240510",
-    "zod": "^3.23.8"
+    "zod": "3.23.8"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.4.5",

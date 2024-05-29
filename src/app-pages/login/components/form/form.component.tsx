@@ -40,6 +40,7 @@ export function LoginForm() {
           type={type}
           error={fieldError}
           className={className}
+          key={name}
         />
       );
     });
