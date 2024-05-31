@@ -37,7 +37,7 @@ function validateFormData(email: string, password: string): Array<FormError> {
   }));
 }
 
-async function handleLogin(password: string, email: string) {
+async function handleLogin(password: string, email: string): Promise<void> {
   try {
     const authService: AuthService = new AuthService();
     const response = await authService.login({ email, password });
