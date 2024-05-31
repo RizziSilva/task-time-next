@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { FormStateType } from '@types';
+import { FormError, FormStateType } from '@types';
 import { LoginForm } from './form.component';
 import * as useLoginHook from '../../hooks/useLogin.hook';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../../constants';
@@ -45,6 +45,25 @@ describe('Login form component tests', () => {
     const errorMessage = await screen.findByText(DEFAULT_LOGIN_ERROR_MESSAGE);
 
     expect(errorMessage).toBeInTheDocument();
+    expect(useLoginHook.handleLoginAction).toHaveBeenCalled();
+  });
+
+  it('Show input error message for invalid value', async () => {
+    const emailError: FormError = { field: 'email', message: 'Invalid value' };
+    const formState: FormStateType = { fieldErrors: [emailError] };
+
+    jest.spyOn(useLoginHook, 'handleLoginAction').mockResolvedValueOnce(formState);
+
+    render(<LoginForm />);
+
+    const submitButton = screen.getByRole('button', { name: 'Login' });
+    act(() => {
+      fireEvent.click(submitButton);
+    });
+
+    const inputErrorMessage = await screen.findByText(emailError.message);
+
+    expect(inputErrorMessage).toBeInTheDocument();
     expect(useLoginHook.handleLoginAction).toHaveBeenCalled();
   });
 });
