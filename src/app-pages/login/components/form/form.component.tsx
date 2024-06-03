@@ -7,7 +7,7 @@ import { FormError } from '@types';
 import { Input, Button } from '@components';
 import { FullLogo } from '@statics';
 import { handleLoginAction } from '../../hooks/useLogin.hook';
-import { INITIAL_STATE, FIELDS, LOGIN_FIELDS } from '../../constants';
+import { INITIAL_STATE, LOGIN_FIELDS } from '../../constants';
 
 export function LoginForm() {
   const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
