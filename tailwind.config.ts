@@ -12,6 +12,7 @@ const config: Config = {
         'red-base': '#D65C56',
         'red-darken': '#BC4B45',
         'background-base': '#E2D9C2',
+        'error-red': '#E32817',
       },
       spacing: {
         '22': '352px',
