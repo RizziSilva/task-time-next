@@ -3,17 +3,17 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ZodIssue, z } from 'zod';
-import { FormStateType, Tokens, FormError } from '@types';
+import { LoginFormState, Tokens, FormError } from '@types';
 import { AuthService } from '@services';
 import { getErrorMessage } from '@utils';
-import { COOKIES_KEYS, ROUTES } from '@constants';
 import {
-  DEFAULT_LOGIN_ERROR_MESSAGE,
-  FIELDS,
+  COOKIES_KEYS,
+  ROUTES,
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
   REQUIRED_PASSWORD_ERROR_MESSAGE,
-} from '../constants';
+} from '@constants';
+import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
 const loginValidation = z
   .object({
@@ -54,9 +54,9 @@ async function handleLogin(password: string, email: string): Promise<void> {
 }
 
 export async function handleLoginAction(
-  state: FormStateType,
+  state: LoginFormState,
   formData: FormData,
-): Promise<FormStateType> {
+): Promise<LoginFormState> {
   try {
     const password = formData.get(FIELDS.PASSWORD.name) as string;
     const email = formData.get(FIELDS.EMAIL.name) as string;

@@ -1,6 +1,6 @@
 import { FormError } from '../form/error.types';
 
-export interface FormStateType {
+export interface LoginFormState {
   password?: FormDataEntryValue | null;
   email?: FormDataEntryValue | null;
   errorMessage?: string;
