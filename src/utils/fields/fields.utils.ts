@@ -1,7 +1,11 @@
-import { SafeParseError, SafeParseSuccess } from 'zod';
+import { FormError } from '@/types';
+import { ZodIssue, ZodObject } from 'zod';
 
-export function getErrorsFromZodParse(test: SafeParseSuccess<Output> | SafeParseError<Input>) {
-  const result = createUserValidation.safeParse({ password, email, name });
+export function validateFormData(
+  validationSchema: ZodObject<any>,
+  values: Object,
+): Array<FormError> {
+  const result = validationSchema.safeParse({ ...values });
   const resultErrors: ZodIssue[] = result?.error?.errors || [];
 
   return resultErrors.map(({ path, message }) => ({

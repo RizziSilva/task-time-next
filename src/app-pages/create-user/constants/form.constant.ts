@@ -23,5 +23,5 @@ export const INITIAL_STATE = {
   [FIELDS_KEYS.EMAIL.name]: '',
   [FIELDS_KEYS.PASSWORD.name]: '',
   errorMessage: '',
-  fieldErrors: null,
+  fieldErrors: [],
 };

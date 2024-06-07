@@ -56,7 +56,7 @@ export function LoginForm() {
       {renderFormErrorMessage()}
       {renderFormFields()}
       <Button text='Login' type='submit' className='mb-1 mt-12' />
-      <Link href={''}>
+      <Link href='/auth/create'>
         <span className='hover:cursor-pointer'>Ou crie sua conta!</span>
       </Link>
     </form>

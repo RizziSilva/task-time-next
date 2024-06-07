@@ -3,7 +3,7 @@ export const FIELDS = {
     name: 'email',
     label: 'Email',
     type: 'email',
-    className: 'mb-7 mt-8',
+    className: '',
   },
   PASSWORD: {
     name: 'password',

@@ -10,13 +10,17 @@ export function Input({ className, label, name, id, type, error }: InputProps) {
 
   function renderErrorMessage() {
     if (hasError)
-      return <span className='text-error-red pl-1.5 leading-full'>{error?.message}</span>;
+      return (
+        <span className='absolute left-0 top-full pl-1.5 leading-full text-error-red'>
+          {error?.message}
+        </span>
+      );
 
     return null;
   }
 
   return (
-    <div className={`relative w-full  ${className}`}>
+    <div className={`relative mb-9 w-full ${className}`}>
       <label htmlFor={id} className='absolute bottom-full left-1.5 leading-full text-black'>
         {label}
       </label>

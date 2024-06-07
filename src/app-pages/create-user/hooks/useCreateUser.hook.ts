@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { ZodIssue, z } from 'zod';
 import { UserService } from '@services';
-import { CreateUserFormState, CreateUserRequest } from '@types';
-import { getErrorMessage } from '@utils';
+import { CreateUserFormState, CreateUserRequest, FormError } from '@types';
+import { getErrorMessage, validateFormData } from '@utils';
 import {
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
@@ -30,16 +30,6 @@ const createUserValidation = z
   })
   .required();
 
-export function handleFieldValidations(email: string, name: string, password: string) {
-  const result = createUserValidation.safeParse({ password, email, name });
-  const resultErrors: ZodIssue[] = result?.error?.errors || [];
-
-  return resultErrors.map(({ path, message }) => ({
-    field: path[0],
-    message,
-  }));
-}
-
 async function handleCreateUser(requestBody: CreateUserRequest): Promise<void> {
   try {
     const userService: UserService = new UserService();
@@ -59,6 +49,9 @@ export async function handleCreateUserAction(
     const email = formData.get(FIELDS_KEYS.EMAIL.name) as string;
     const name = formData.get(FIELDS_KEYS.NAME.name) as string;
     const requestBody: CreateUserRequest = { email, name, password };
+    const errors: Array<FormError> = validateFormData(createUserValidation, requestBody);
+
+    if (errors.length) return { email, name, password, fieldErrors: errors };
 
     await handleCreateUser(requestBody);
   } catch (error) {

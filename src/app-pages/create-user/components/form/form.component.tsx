@@ -1,8 +1,13 @@
-import Link from 'next/link';
+'use client';
+
 import { useFormState } from 'react-dom';
+import { FormError } from '@types';
 import { Button, Input } from '@components';
 import { FIELDS, INITIAL_STATE } from '../../constants';
 import { handleCreateUserAction } from '../../hooks';
+import Image from 'next/image';
+import { FullLogo } from '@/statics';
+import Link from 'next/link';
 
 export function CreateUserForm() {
   const [state, formAction] = useFormState(handleCreateUserAction, INITIAL_STATE);
@@ -45,11 +50,18 @@ export function CreateUserForm() {
     <form
       role='form'
       action={formAction}
-      className='flex h-full w-full flex-col items-center justify-center px-12'
+      className='flex h-full w-full flex-col items-center justify-center p-12'
     >
+      <Image src={FullLogo} alt='Site logo' className='mb-10' />
       {renderFormErrorMessage()}
       {renderFormFields()}
-      <Button text='Login' type='submit' className='mb-1 mt-12' />
+      <Button text='Criar conta' type='submit' className='mb-1 mt-4' />
+      <span>
+        Já possui uma conta?{' '}
+        <Link className='cursor-pointer text-blue-500 underline' href='/auth/login'>
+          Login!
+        </Link>
+      </span>
     </form>
   );
 }

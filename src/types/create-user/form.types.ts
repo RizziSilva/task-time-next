@@ -1,9 +1,9 @@
 import { FormError } from '../form/error.types';
 
 export interface CreateUserFormState {
-  email?: string;
-  name?: string;
-  password?: string;
+  email?: FormDataEntryValue | null;
+  name?: FormDataEntryValue | null;
+  password?: FormDataEntryValue | null;
   errorMessage?: string;
-  fieldErrors?: FormError;
+  fieldErrors?: Array<FormError>;
 }
