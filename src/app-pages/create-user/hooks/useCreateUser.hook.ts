@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { ZodIssue, z } from 'zod';
+import { z } from 'zod';
 import { UserService } from '@services';
 import { CreateUserFormState, CreateUserRequest, FormError } from '@types';
 import { getErrorMessage, validateFormData } from '@utils';

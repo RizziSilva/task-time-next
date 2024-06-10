@@ -52,10 +52,10 @@ export function LoginForm() {
       action={formAction}
       className='flex h-full w-full flex-col items-center justify-center px-12'
     >
-      <Image src={FullLogo} alt='Site logo' />
+      <Image src={FullLogo} alt='Site logo' className='mb-10' />
       {renderFormErrorMessage()}
       {renderFormFields()}
-      <Button text='Login' type='submit' className='mb-1 mt-12' />
+      <Button text='Login' type='submit' className='mb-1 mt-4' />
       <Link href='/auth/create'>
         <span className='hover:cursor-pointer'>Ou crie sua conta!</span>
       </Link>

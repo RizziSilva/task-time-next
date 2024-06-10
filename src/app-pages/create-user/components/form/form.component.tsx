@@ -19,7 +19,7 @@ export function CreateUserForm() {
     if (!hasError) return null;
 
     return (
-      <div className='my-4 flex place-content-center text-justify'>
+      <div className='mb-6 flex place-content-center text-justify'>
         <span className='text-red-500'>{errorMessage}</span>
       </div>
     );

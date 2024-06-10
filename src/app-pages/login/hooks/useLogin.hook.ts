@@ -2,10 +2,10 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { ZodIssue, z } from 'zod';
+import { z } from 'zod';
 import { LoginFormState, Tokens, FormError } from '@types';
 import { AuthService } from '@services';
-import { getErrorMessage } from '@utils';
+import { getErrorMessage, validateFormData } from '@utils';
 import {
   COOKIES_KEYS,
   ROUTES,
@@ -26,16 +26,6 @@ const loginValidation = z
       .email({ message: INVALID_EMAIL_ERROR_MESSAGE }),
   })
   .required();
-
-function validateFormData(email: string, password: string): Array<FormError> {
-  const result = loginValidation.safeParse({ password, email });
-  const resultErrors: ZodIssue[] = result?.error?.errors || [];
-
-  return resultErrors.map(({ path, message }) => ({
-    field: path[0],
-    message,
-  }));
-}
 
 async function handleLogin(password: string, email: string): Promise<void> {
   try {
@@ -60,7 +50,7 @@ export async function handleLoginAction(
   try {
     const password = formData.get(FIELDS.PASSWORD.name) as string;
     const email = formData.get(FIELDS.EMAIL.name) as string;
-    const errors: Array<FormError> = validateFormData(email, password);
+    const errors: Array<FormError> = validateFormData(loginValidation, { email, password });
 
     if (errors.length) return { email, password, fieldErrors: errors };
 
