@@ -15,7 +15,7 @@ const config: Config = {
         'error-red': '#E32817',
       },
       spacing: {
-        'create-user-page-height': '580px',
+        'create-user-page-height': '571px',
         'login-page-height': '352px',
       },
       lineHeight: {

@@ -19,7 +19,7 @@ export function LoginForm() {
     if (!hasError) return null;
 
     return (
-      <div className='my-4 flex place-content-center text-justify'>
+      <div className='mb-6 flex place-content-center text-justify'>
         <span className='text-red-500'>{errorMessage}</span>
       </div>
     );
@@ -50,7 +50,7 @@ export function LoginForm() {
     <form
       role='form'
       action={formAction}
-      className='flex h-full w-full flex-col items-center justify-center px-12'
+      className='flex h-full w-full flex-col items-center justify-center p-12'
     >
       <Image src={FullLogo} alt='Site logo' className='mb-10' />
       {renderFormErrorMessage()}

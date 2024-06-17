@@ -11,7 +11,7 @@ export const FIELDS_KEYS = {
   },
   PASSWORD: {
     name: 'password',
-    type: 'text',
+    type: 'password',
     label: 'Senha',
   },
 };
