@@ -1,17 +1,15 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { AuthService } from '@services';
-import {
-  ROUTES,
-  INVALID_EMAIL_ERROR_MESSAGE,
-  REQUIRED_EMAIL_ERROR_MESSAGE,
-  REQUIRED_PASSWORD_ERROR_MESSAGE,
-} from '@constants';
+import { ROUTES, REQUIRED_EMAIL_ERROR_MESSAGE } from '@constants';
 import { FormError, LoginFormState } from '@types';
+import * as utils from '@utils';
 import { handleLoginAction } from './useLogin.hook';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
 jest.mock('@services');
+
+jest.mock('@utils');
 
 jest.mock('next/navigation', () => ({
   ...jest.requireActual('next/navigation'),
@@ -38,6 +36,7 @@ describe('UseLogin hook tests', () => {
       const loginRequestSpy = jest
         .spyOn(AuthService.prototype, 'login')
         .mockResolvedValueOnce(loginResponse);
+      jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
 
       const result: LoginFormState = await handleLoginAction(formState, formData);
 
@@ -59,18 +58,20 @@ describe('UseLogin hook tests', () => {
       const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login').mockImplementation(() => {
         throw new Error();
       });
+      jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
+      jest.spyOn(utils, 'getErrorMessage').mockReturnValueOnce(DEFAULT_LOGIN_ERROR_MESSAGE);
 
       const result: LoginFormState = await handleLoginAction(formState, formData);
 
       expect(result).toEqual(expected);
+      expect(utils.validateFormData).toHaveBeenCalled();
       expect(loginRequestSpy).toHaveBeenCalled();
       expect(loginRequestSpy).toThrow();
     });
 
-    it('Return required email error for missing email', async () => {
+    it('Return field error when validation fails', async () => {
       const password: string = 'testePassword';
       const formState: LoginFormState = {};
-
       const formData: FormData = new FormData();
 
       formData.append('password', password);
@@ -84,58 +85,13 @@ describe('UseLogin hook tests', () => {
       const expected: LoginFormState = { ...formState, fieldErrors: [formError] };
       const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login');
 
-      const result: LoginFormState = await handleLoginAction(formState, formData);
-
-      expect(result).toEqual(expected);
-      expect(loginRequestSpy).not.toHaveBeenCalled();
-    });
-
-    it('Return invalid email error for invalid email', async () => {
-      const email: string = 'invalid@email';
-      const password: string = 'testPassword';
-      const formState: LoginFormState = {};
-
-      const formData: FormData = new FormData();
-
-      formData.append('email', email);
-      formData.append('password', password);
-      formState.email = email;
-      formState.password = password;
-
-      const formError: FormError = {
-        field: FIELDS.EMAIL.name,
-        message: INVALID_EMAIL_ERROR_MESSAGE,
-      };
-      const expected: LoginFormState = { ...formState, fieldErrors: [formError] };
-      const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login');
+      jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([formError]);
 
       const result: LoginFormState = await handleLoginAction(formState, formData);
 
       expect(result).toEqual(expected);
       expect(loginRequestSpy).not.toHaveBeenCalled();
-    });
-
-    it('Return required password error for missing password', async () => {
-      const email: string = 'test@email.com';
-      const formState: LoginFormState = {};
-
-      const formData: FormData = new FormData();
-
-      formData.append('email', email);
-      formState.email = email;
-      formState.password = null;
-
-      const formError: FormError = {
-        field: FIELDS.PASSWORD.name,
-        message: REQUIRED_PASSWORD_ERROR_MESSAGE,
-      };
-      const expected: LoginFormState = { ...formState, fieldErrors: [formError] };
-      const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login');
-
-      const result: LoginFormState = await handleLoginAction(formState, formData);
-
-      expect(result).toEqual(expected);
-      expect(loginRequestSpy).not.toHaveBeenCalled();
+      expect(redirect).not.toHaveBeenCalled();
     });
   });
 });

@@ -60,5 +60,5 @@ export async function handleCreateUserAction(
     return { errorMessage };
   }
 
-  redirect(ROUTES.HOME);
+  redirect(ROUTES.LOGIN);
 }

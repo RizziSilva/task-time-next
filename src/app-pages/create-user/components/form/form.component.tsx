@@ -17,7 +17,6 @@ export function CreateUserForm() {
     const hasError: boolean = !!errorMessage;
 
     if (!hasError) return null;
-
     return (
       <div className='mb-6 flex place-content-center text-justify'>
         <span className='text-red-500'>{errorMessage}</span>
