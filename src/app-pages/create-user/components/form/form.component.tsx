@@ -1,23 +1,22 @@
 'use client';
 
 import { useFormState } from 'react-dom';
-import Link from 'next/link';
-import Image from 'next/image';
 import { FormError } from '@types';
-import { Input, Button } from '@components';
-import { FullLogo } from '@statics';
-import { handleLoginAction } from '../../hooks/useLogin.hook';
-import { INITIAL_STATE, LOGIN_FIELDS } from '../../constants';
+import { Button, Input } from '@components';
+import { FIELDS, INITIAL_STATE } from '../../constants';
+import { handleCreateUserAction } from '../../hooks';
+import Image from 'next/image';
+import { FullLogo } from '@/statics';
+import Link from 'next/link';
 
-export function LoginForm() {
-  const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
+export function CreateUserForm() {
+  const [state, formAction] = useFormState(handleCreateUserAction, INITIAL_STATE);
 
   function renderFormErrorMessage() {
     const { errorMessage } = state;
     const hasError: boolean = !!errorMessage;
 
     if (!hasError) return null;
-
     return (
       <div className='mb-6 flex place-content-center text-justify'>
         <span className='text-red-500'>{errorMessage}</span>
@@ -26,8 +25,8 @@ export function LoginForm() {
   }
 
   function renderFormFields() {
-    return LOGIN_FIELDS.map((field) => {
-      const { label, name, type, className } = field;
+    return FIELDS.map((field) => {
+      const { label, name, type } = field;
       const fieldError: FormError | undefined = state.fieldErrors?.find(
         ({ field }) => field === name,
       );
@@ -39,7 +38,7 @@ export function LoginForm() {
           label={label}
           type={type}
           error={fieldError}
-          className={className}
+          className=''
           key={name}
         />
       );
@@ -55,10 +54,13 @@ export function LoginForm() {
       <Image src={FullLogo} alt='Site logo' className='mb-10' />
       {renderFormErrorMessage()}
       {renderFormFields()}
-      <Button text='Login' type='submit' className='mb-1 mt-4' />
-      <Link href='/auth/create'>
-        <span className='hover:cursor-pointer'>Ou crie sua conta!</span>
-      </Link>
+      <Button text='Criar conta' type='submit' className='mb-1 mt-4' />
+      <span>
+        Já possui uma conta?{' '}
+        <Link className='cursor-pointer text-blue-500 underline' href='/auth/login'>
+          Login!
+        </Link>
+      </span>
     </form>
   );
 }

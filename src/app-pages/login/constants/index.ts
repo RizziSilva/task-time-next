@@ -1,7 +1,2 @@
 export { FIELDS, INITIAL_STATE, LOGIN_FIELDS } from './form.constant';
-export {
-  DEFAULT_LOGIN_ERROR_MESSAGE,
-  INVALID_EMAIL_ERROR_MESSAGE,
-  REQUIRED_EMAIL_ERROR_MESSAGE,
-  REQUIRED_PASSWORD_ERROR_MESSAGE,
-} from './messages.constants';
+export { DEFAULT_LOGIN_ERROR_MESSAGE } from './messages.constants';

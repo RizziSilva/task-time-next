@@ -1,18 +1,15 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { AuthService } from '@services';
-import { ROUTES } from '@constants';
-import { FormError, FormStateType } from '@types';
+import { ROUTES, REQUIRED_EMAIL_ERROR_MESSAGE } from '@constants';
+import { FormError, LoginFormState } from '@types';
+import * as utils from '@utils';
 import { handleLoginAction } from './useLogin.hook';
-import {
-  DEFAULT_LOGIN_ERROR_MESSAGE,
-  FIELDS,
-  INVALID_EMAIL_ERROR_MESSAGE,
-  REQUIRED_EMAIL_ERROR_MESSAGE,
-  REQUIRED_PASSWORD_ERROR_MESSAGE,
-} from '../constants';
+import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
 jest.mock('@services');
+
+jest.mock('@utils');
 
 jest.mock('next/navigation', () => ({
   ...jest.requireActual('next/navigation'),
@@ -29,7 +26,7 @@ jest.mock('next/headers', () => ({
 describe('UseLogin hook tests', () => {
   describe('handleLoginAction tests', () => {
     it('Save cookies and redirect to home on request success', async () => {
-      const formState: FormStateType = {};
+      const formState: LoginFormState = {};
       const loginResponse: any = { access_token: 'access_token', refresh_token: 'refresh_token' };
       const formData: FormData = new FormData();
 
@@ -39,8 +36,9 @@ describe('UseLogin hook tests', () => {
       const loginRequestSpy = jest
         .spyOn(AuthService.prototype, 'login')
         .mockResolvedValueOnce(loginResponse);
+      jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
 
-      const result: FormStateType = await handleLoginAction(formState, formData);
+      const result: LoginFormState = await handleLoginAction(formState, formData);
 
       // TODO silva.william 22/05/2024: Assert that cookies().set instead of cookies gets called 2 times.
       expect(result).toBeUndefined();
@@ -50,8 +48,8 @@ describe('UseLogin hook tests', () => {
     });
 
     it('Return default error message on login error', async () => {
-      const formState: FormStateType = {};
-      const expected: FormStateType = { errorMessage: DEFAULT_LOGIN_ERROR_MESSAGE };
+      const formState: LoginFormState = {};
+      const expected: LoginFormState = { errorMessage: DEFAULT_LOGIN_ERROR_MESSAGE };
       const formData: FormData = new FormData();
 
       formData.append('email', 'test@email.com');
@@ -60,18 +58,20 @@ describe('UseLogin hook tests', () => {
       const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login').mockImplementation(() => {
         throw new Error();
       });
+      jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
+      jest.spyOn(utils, 'getErrorMessage').mockReturnValueOnce(DEFAULT_LOGIN_ERROR_MESSAGE);
 
-      const result: FormStateType = await handleLoginAction(formState, formData);
+      const result: LoginFormState = await handleLoginAction(formState, formData);
 
       expect(result).toEqual(expected);
+      expect(utils.validateFormData).toHaveBeenCalled();
       expect(loginRequestSpy).toHaveBeenCalled();
       expect(loginRequestSpy).toThrow();
     });
 
-    it('Return required email error for missing email', async () => {
+    it('Return field error when validation fails', async () => {
       const password: string = 'testePassword';
-      const formState: FormStateType = {};
-
+      const formState: LoginFormState = {};
       const formData: FormData = new FormData();
 
       formData.append('password', password);
@@ -82,61 +82,16 @@ describe('UseLogin hook tests', () => {
         field: FIELDS.EMAIL.name,
         message: REQUIRED_EMAIL_ERROR_MESSAGE,
       };
-      const expected: FormStateType = { ...formState, fieldErrors: [formError] };
+      const expected: LoginFormState = { ...formState, fieldErrors: [formError] };
       const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login');
 
-      const result: FormStateType = await handleLoginAction(formState, formData);
+      jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([formError]);
+
+      const result: LoginFormState = await handleLoginAction(formState, formData);
 
       expect(result).toEqual(expected);
       expect(loginRequestSpy).not.toHaveBeenCalled();
-    });
-
-    it('Return invalid email error for invalid email', async () => {
-      const email: string = 'invalid@email';
-      const password: string = 'testPassword';
-      const formState: FormStateType = {};
-
-      const formData: FormData = new FormData();
-
-      formData.append('email', email);
-      formData.append('password', password);
-      formState.email = email;
-      formState.password = password;
-
-      const formError: FormError = {
-        field: FIELDS.EMAIL.name,
-        message: INVALID_EMAIL_ERROR_MESSAGE,
-      };
-      const expected: FormStateType = { ...formState, fieldErrors: [formError] };
-      const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login');
-
-      const result: FormStateType = await handleLoginAction(formState, formData);
-
-      expect(result).toEqual(expected);
-      expect(loginRequestSpy).not.toHaveBeenCalled();
-    });
-
-    it('Return required password error for missing password', async () => {
-      const email: string = 'test@email.com';
-      const formState: FormStateType = {};
-
-      const formData: FormData = new FormData();
-
-      formData.append('email', email);
-      formState.email = email;
-      formState.password = null;
-
-      const formError: FormError = {
-        field: FIELDS.PASSWORD.name,
-        message: REQUIRED_PASSWORD_ERROR_MESSAGE,
-      };
-      const expected: FormStateType = { ...formState, fieldErrors: [formError] };
-      const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login');
-
-      const result: FormStateType = await handleLoginAction(formState, formData);
-
-      expect(result).toEqual(expected);
-      expect(loginRequestSpy).not.toHaveBeenCalled();
+      expect(redirect).not.toHaveBeenCalled();
     });
   });
 });
