@@ -55,7 +55,7 @@ export function LoginForm() {
       <Image src={FullLogo} alt='Site logo' className='mb-10' />
       {renderFormErrorMessage()}
       {renderFormFields()}
-      <Button text='Login' type='submit' className='mb-1 mt-4' />
+      <Button shouldUseLoading={true} text='Login' type='submit' className='mb-1 mt-4' />
       <Link href='/auth/create'>
         <span className='hover:cursor-pointer'>Ou crie sua conta!</span>
       </Link>
