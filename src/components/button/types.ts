@@ -5,4 +5,5 @@ export interface ButtonProps {
   text: string;
   className?: string;
   type: 'button' | 'submit' | 'reset' | undefined;
+  shouldUseLoading?: boolean;
 }

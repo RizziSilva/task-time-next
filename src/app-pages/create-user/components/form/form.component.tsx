@@ -54,7 +54,7 @@ export function CreateUserForm() {
       <Image src={FullLogo} alt='Site logo' className='mb-10' />
       {renderFormErrorMessage()}
       {renderFormFields()}
-      <Button text='Criar conta' type='submit' className='mb-1 mt-4' />
+      <Button shouldUseLoading={true} text='Criar conta' type='submit' className='mb-1 mt-4' />
       <span>
         Já possui uma conta?{' '}
         <Link className='cursor-pointer text-blue-500 underline' href='/auth/login'>
