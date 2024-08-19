@@ -7,3 +7,4 @@ export {
   REQUIRED_PASSWORD_ERROR_MESSAGE,
 } from './messages.constant';
 export { TEST_IDS } from './testIds.constant';
+export { SIDEBAR_OPTIONS } from './sidebar.constant';
