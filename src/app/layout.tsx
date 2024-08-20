@@ -18,8 +18,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${inter.className} flex h-screen w-screen bg-background-base text-base`}>
-        <Sidebar />
-        <div className='ml-sidebar-width'>{children}</div>
+        {children}
       </body>
     </html>
   );

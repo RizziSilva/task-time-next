@@ -9,6 +9,7 @@ export const SIDEBAR_OPTIONS = [
         text: 'Cronômetro',
         page: ROUTES.TIMER,
         icon: TrackSidebar,
+        iconAlt: 'Ícone de um cronômetro',
       },
     ],
   },

@@ -1,3 +1,6 @@
-import { HomePage } from '@pages';
+import { ROUTES } from '@constants';
+import { redirect } from 'next/navigation';
 
-export default HomePage;
+export default function handleRedirect() {
+  redirect(ROUTES.TIMER);
+}
