@@ -2,19 +2,31 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { SIDEBAR_OPTIONS } from '@constants';
-import { FullLogo, SidebarMenuIcon, UserIconHolder } from '@statics';
+import { FullLogo, SidebarCloseIcon, SidebarMenuIcon, UserIconHolder } from '@statics';
 import { useSidebarHook } from './useSidebar.hook';
+import { SIDEBAR_OPTIONS } from './sidebar.constant';
+import { ROUTES } from '@/constants';
 
 export function Sidebar() {
   const { getIsSelected, handleToggleMenu, toggleMenu } = useSidebarHook();
 
   function renderHeader() {
     return (
-      <div className='flex w-full justify-center border-b-2 border-solid border-background-color-darken p-sidebar-padding pb-4'>
+      <div className='flex h-20 w-full items-center justify-center border-b-2 border-solid border-background-color-darken p-sidebar-padding pb-4'>
+        <button
+          onClick={handleToggleMenu}
+          className=' mr-3 hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-#412a4c small-screen:flex'
+        >
+          <Image
+            style={{ objectFit: 'contain' }}
+            src={SidebarCloseIcon}
+            height={18}
+            alt='Ícone para fechar o menu de opções'
+          />
+        </button>
         <Image
           style={{ objectFit: 'contain' }}
-          width={170}
+          width={145}
           height={50}
           alt='Imagem do logo do site'
           src={FullLogo}
@@ -25,23 +37,25 @@ export function Sidebar() {
 
   function renderFooter() {
     return (
-      <div className='flex w-full justify-start border-t-2 border-solid border-background-color-darken p-sidebar-padding pt-4'>
-        <Image
-          className='mr-2'
-          width={30}
-          height={30}
-          alt='Imagem do perfil do usuário'
-          src={UserIconHolder}
-        />
-        <div className='flex w-[calc(100%-theme(spacing.2)-30px)] flex-col '>
-          <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
-            <span>William Rizzi da Silva</span>
-          </div>
-          <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
-            <span>William@hotmail.com</span>
+      <Link href={ROUTES.USER}>
+        <div className='flex w-full justify-start border-t-2 border-solid border-background-color-darken p-sidebar-padding pt-4'>
+          <Image
+            className='mr-2'
+            width={30}
+            height={30}
+            alt='Imagem do perfil do usuário'
+            src={UserIconHolder}
+          />
+          <div className='flex w-[calc(100%-theme(spacing.2)-theme(spacing.3)-30px)] flex-col '>
+            <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
+              <span>William Rizzi da Silva</span>
+            </div>
+            <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
+              <span>William@hotmail.com</span>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 
@@ -86,12 +100,17 @@ export function Sidebar() {
 
   function renderSidebarSmallScreen() {
     return (
-      <div className='py-10px hidden h-20 w-full items-center justify-start bg-sidebar-bg-color px-4 small-screen:flex'>
+      <div className='hidden h-20 w-full items-center justify-start bg-sidebar-bg-color px-4 py-10px small-screen:flex'>
         <button
           onClick={handleToggleMenu}
-          className='bg-#412a4c mr-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full'
+          className='mr-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-#412a4c'
         >
-          <Image src={SidebarMenuIcon} height={18} alt='Ícone para abrir o menu de opções' />
+          <Image
+            style={{ objectFit: 'contain' }}
+            src={SidebarMenuIcon}
+            height={18}
+            alt='Ícone para abrir o menu de opções'
+          />
         </button>
         <Image style={{ objectFit: 'contain' }} alt='Imagem do logo do site' src={FullLogo} />
       </div>
@@ -102,7 +121,7 @@ export function Sidebar() {
     <>
       {renderSidebarSmallScreen()}
       <div
-        className={`${toggleMenu ? 'translate-x-0' : '-translate-x-full'} z-3 fixed flex h-full w-sidebar-width flex-col items-center bg-sidebar-bg-color text-font-color transition-transform duration-200 ease-in-out`}
+        className={`${toggleMenu ? 'small-screen:translate-x-0' : 'small-screen:-translate-x-full'} fixed z-3 flex h-full w-sidebar-width flex-col items-center bg-sidebar-bg-color text-font-color transition-transform duration-200 ease-in-out`}
       >
         {renderHeader()}
         {renderLinks()}

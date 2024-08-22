@@ -31,7 +31,7 @@ const config: Config = {
       spacing: {
         'create-user-page-height': '571px',
         'login-page-height': '352px',
-        'sidebar-width': '200px',
+        'sidebar-width': '230px',
         'sidebar-padding': '20px',
         '10px': '10px',
       },

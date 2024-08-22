@@ -1,5 +1,6 @@
 import { TrackSidebar } from '@/statics';
-import { ROUTES } from './routes.constants';
+import { ROUTES } from '../../constants/routes.constants';
+import { SidebarCloseIcon, SidebarMenuIcon } from '@statics';
 
 export const SIDEBAR_OPTIONS = [
   {
