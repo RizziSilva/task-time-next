@@ -1,8 +1,8 @@
-import { TrackSidebar } from '@/statics';
+import { TrackSidebar } from '@statics';
 import { ROUTES } from '../../constants/routes.constants';
-import { SidebarCloseIcon, SidebarMenuIcon } from '@statics';
+import { SidebarOptionType } from './types';
 
-export const SIDEBAR_OPTIONS = [
+export const SIDEBAR_OPTIONS: Array<SidebarOptionType> = [
   {
     title: 'Acompanhar',
     items: [

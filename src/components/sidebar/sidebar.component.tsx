@@ -3,9 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FullLogo, SidebarCloseIcon, SidebarMenuIcon, UserIconHolder } from '@statics';
+import { ROUTES } from '@constants';
 import { useSidebarHook } from './useSidebar.hook';
 import { SIDEBAR_OPTIONS } from './sidebar.constant';
-import { ROUTES } from '@/constants';
+import { SidebarItemsType } from './types';
 
 export function Sidebar() {
   const { getIsSelected, handleToggleMenu, toggleMenu } = useSidebarHook();
@@ -59,12 +60,13 @@ export function Sidebar() {
     );
   }
 
-  function renderSubItem(items: Array<any>) {
+  function renderSubItem(items: Array<SidebarItemsType>) {
     return items.map(({ text, page, icon, iconAlt }) => {
       const isSelected = getIsSelected(page);
 
       return (
         <Link
+          key={page}
           className={`mb-1 w-full px-sidebar-padding ${isSelected ? 'bg-sidebar-bg-selected' : 'hover:bg-sidebar-bg-hover'}`}
           href={page}
         >
@@ -86,7 +88,7 @@ export function Sidebar() {
   function renderLinksOptions() {
     return SIDEBAR_OPTIONS.map(({ title, items }) => {
       return (
-        <div className='mb-4 flex w-full flex-col items-start'>
+        <div key={title} className='mb-4 flex w-full flex-col items-start'>
           <span className='mb-1 px-sidebar-padding text-sidebar-option-font-color'>{title}</span>
           {renderSubItem(items)}
         </div>

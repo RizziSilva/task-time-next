@@ -4,10 +4,10 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export function useSidebarHook() {
-  const [toggleMenu, setToggleMenu] = useState(false);
-  const pathname = usePathname();
+  const [toggleMenu, setToggleMenu] = useState<boolean>(false);
+  const pathname: string = usePathname();
 
-  function handleToggleMenu() {
+  function handleToggleMenu(): void {
     setToggleMenu(!toggleMenu);
   }
 
