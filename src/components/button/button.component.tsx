@@ -1,3 +1,5 @@
+'use client';
+
 import { useFormStatus } from 'react-dom';
 import { TEST_IDS } from '@constants';
 import { ButtonProps } from './types';
