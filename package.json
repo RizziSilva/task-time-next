@@ -15,6 +15,7 @@
     "next": "14.2.1",
     "react": "19.0.0-beta-9d76c954cf-20240510",
     "react-dom": "19.0.0-beta-9d76c954cf-20240510",
+    "react-query": "^3.39.3",
     "zod": "3.23.8"
   },
   "devDependencies": {
