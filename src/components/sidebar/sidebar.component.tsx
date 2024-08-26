@@ -17,6 +17,7 @@ export function Sidebar() {
         <button
           onClick={handleToggleMenu}
           className=' mr-3 hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-#412a4c small-screen:flex'
+          data-testid={TEST_IDS.CLOSE_MOBILE_SIDEBAR}
         >
           <Image
             style={{ objectFit: 'contain' }}
@@ -31,6 +32,7 @@ export function Sidebar() {
           height={50}
           alt='Imagem do logo do site'
           src={FullLogo}
+          data-testid={TEST_IDS.SIDEBAR_LOGO_IMAGE}
         />
       </div>
     );
@@ -106,6 +108,7 @@ export function Sidebar() {
         <button
           onClick={handleToggleMenu}
           className='mr-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-#412a4c'
+          data-testid={TEST_IDS.OPEN_MOBILE_SIDEBAR}
         >
           <Image
             style={{ objectFit: 'contain' }}
@@ -114,7 +117,12 @@ export function Sidebar() {
             alt='Ícone para abrir o menu de opções'
           />
         </button>
-        <Image style={{ objectFit: 'contain' }} alt='Imagem do logo do site' src={FullLogo} />
+        <Image
+          style={{ objectFit: 'contain' }}
+          alt='Imagem do logo do site'
+          src={FullLogo}
+          data-testid={TEST_IDS.HEADER_LOGO_IMAGE}
+        />
       </div>
     );
   }
@@ -124,6 +132,7 @@ export function Sidebar() {
       {renderSidebarSmallScreen()}
       <div
         className={`${toggleMenu ? 'small-screen:translate-x-0' : 'small-screen:-translate-x-full'} fixed z-3 flex h-full w-sidebar-width flex-col items-center bg-sidebar-bg-color text-font-color transition-transform duration-200 ease-in-out`}
+        data-testid={TEST_IDS.SIDEBAR}
       >
         {renderHeader()}
         {renderLinks()}

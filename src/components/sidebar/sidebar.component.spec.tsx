@@ -1,13 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { useRouter } from 'next/router';
-import { ROUTES } from '@constants';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Sidebar } from './sidebar.component';
 import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
-
-jest.mock('next/router', () => ({
-  ...jest.requireActual('next/router'),
-  useRouter: () => {},
-}));
 
 describe('Sidebar component tests', () => {
   it('Render sidebar correctly', async () => {
@@ -16,8 +9,7 @@ describe('Sidebar component tests', () => {
     const userNameSpan = await screen.findByTestId(TEST_IDS.USER_NAME);
     const userEmailSpan = await screen.findByTestId(TEST_IDS.USER_EMAIL);
     const links = await screen.findAllByRole('link');
-    const logoImages = await screen.findAllByAltText('logo', { exact: false });
-    const headerLogo = logoImages[1];
+    const logoImages = await screen.findByTestId(TEST_IDS.SIDEBAR_LOGO_IMAGE);
 
     for (const sidebarOption of SIDEBAR_OPTIONS) {
       const optionLinks = sidebarOption.items;
@@ -32,17 +24,28 @@ describe('Sidebar component tests', () => {
 
     expect(userNameSpan).toBeInTheDocument();
     expect(userEmailSpan).toBeInTheDocument();
-    expect(headerLogo).toBeInTheDocument();
+    expect(logoImages).toBeInTheDocument();
   });
 
-  it('Change page on link click', async () => {
+  it('Render mobile sidebar correctly', async () => {
     render(<Sidebar />);
 
-    const links = await screen.findAllByRole('link');
-    const link = links.find((link) => link.getAttribute('href') === ROUTES.TIMER);
+    const sidebar = await screen.findByTestId(TEST_IDS.SIDEBAR);
+    const openButton = await screen.findByTestId(TEST_IDS.OPEN_MOBILE_SIDEBAR);
+    const closeButton = await screen.findByTestId(TEST_IDS.CLOSE_MOBILE_SIDEBAR);
 
-    if (link) fireEvent.click(link);
+    expect(sidebar).toHaveClass('small-screen:-translate-x-full');
 
-    expect(useRouter);
+    act(() => {
+      fireEvent.click(openButton);
+    });
+
+    expect(sidebar).toHaveClass('small-screen:translate-x-0');
+
+    act(() => {
+      fireEvent.click(closeButton);
+    });
+
+    expect(sidebar).toHaveClass('small-screen:-translate-x-full');
   });
 });
