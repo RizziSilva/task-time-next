@@ -15,3 +15,8 @@ export const SIDEBAR_OPTIONS: Array<SidebarOptionType> = [
     ],
   },
 ];
+
+export const TEST_IDS = {
+  USER_NAME: 'user-name',
+  USER_EMAIL: 'user-email',
+};

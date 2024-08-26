@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FullLogo, SidebarCloseIcon, SidebarMenuIcon, UserIconHolder } from '@statics';
 import { ROUTES } from '@constants';
 import { useSidebarHook } from './useSidebar.hook';
-import { SIDEBAR_OPTIONS } from './sidebar.constant';
+import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
 import { SidebarItemsType } from './types';
 
 export function Sidebar() {
@@ -49,10 +49,10 @@ export function Sidebar() {
           />
           <div className='flex w-[calc(100%-theme(spacing.2)-theme(spacing.3)-30px)] flex-col '>
             <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
-              <span>William Rizzi da Silva</span>
+              <span data-testid={TEST_IDS.USER_NAME}>William Rizzi da Silva</span>
             </div>
             <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
-              <span>William@hotmail.com</span>
+              <span data-testid={TEST_IDS.USER_EMAIL}>William@hotmail.com</span>
             </div>
           </div>
         </div>
