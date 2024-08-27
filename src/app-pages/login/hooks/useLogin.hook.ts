@@ -1,19 +1,17 @@
 'use server';
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { LoginFormState, Tokens, FormError } from '@types';
-import { AuthService } from '@services';
 import { getErrorMessage, validateFormData } from '@utils';
 import {
-  COOKIES_KEYS,
   ROUTES,
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
   REQUIRED_PASSWORD_ERROR_MESSAGE,
 } from '@constants';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
+import { signIn } from 'next-auth/react';
 
 const loginValidation = z
   .object({
@@ -27,22 +25,6 @@ const loginValidation = z
   })
   .required();
 
-async function handleLogin(password: string, email: string): Promise<void> {
-  try {
-    const authService: AuthService = new AuthService();
-    const response = await authService.login({ email, password });
-    const tokens: Tokens = {
-      accessToken: response.access_token,
-      refreshToken: response.refresh_token,
-    };
-
-    cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
-    cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
-  } catch (error) {
-    throw error;
-  }
-}
-
 export async function handleLoginAction(
   state: LoginFormState,
   formData: FormData,
@@ -54,7 +36,7 @@ export async function handleLoginAction(
 
     if (errors.length) return { email, password, fieldErrors: errors };
 
-    await handleLogin(password, email);
+    await signIn('credentials', { password, email });
   } catch (error) {
     const errorMessage: string = getErrorMessage(error, DEFAULT_LOGIN_ERROR_MESSAGE);
 

@@ -7,22 +7,23 @@ import Credentials from 'next-auth/providers/credentials';
 const handler = NextAuth({
   providers: [
     Credentials({
+      name: 'credentials',
       credentials: {
         password: { label: 'Password', type: 'password' },
         email: { label: 'Email', type: 'text' },
       },
       async authorize(credentials, req) {
         try {
-          const password = credentials?.password;
-          const email = credentials?.email;
+          const password = credentials?.password || '';
+          const email = credentials?.email || '';
           const authService: AuthService = new AuthService();
           const response = await authService.login({ email, password });
-          const tokens: Tokens = {
+          const user: Tokens = {
             accessToken: response.access_token,
             refreshToken: response.refresh_token,
           };
 
-          return tokens;
+          return user;
         } catch (error) {
           return null;
         }
