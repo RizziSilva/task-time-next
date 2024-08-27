@@ -2,14 +2,24 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 import { FullLogo, SidebarCloseIcon, SidebarMenuIcon, UserIconHolder } from '@statics';
+import { UserService } from '@/services';
 import { ROUTES } from '@constants';
 import { useSidebarHook } from './useSidebar.hook';
 import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
 import { SidebarItemsType } from './types';
 
 export function Sidebar() {
+  const userService: UserService = new UserService();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['userInformation'],
+    queryFn: userService.getUser,
+  });
   const { getIsSelected, handleToggleMenu, toggleMenu } = useSidebarHook();
+  console.log('data', data);
+  console.log('isLoading', isLoading);
+  console.log('isError', isError);
 
   function renderHeader() {
     return (
