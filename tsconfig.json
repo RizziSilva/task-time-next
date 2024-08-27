@@ -25,7 +25,8 @@
       "@constants": ["./src/constants"],
       "@types": ["./src/types"],
       "@services": ["./src/services"],
-      "@utils": ["./src/utils"]
+      "@utils": ["./src/utils"],
+      "@providers": ["./src/providers"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
