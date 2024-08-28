@@ -7,4 +7,5 @@ export interface InputProps {
   name: string;
   id: string;
   error?: FormError;
+  onChange?: any;
 }

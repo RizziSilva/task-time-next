@@ -1,8 +1,12 @@
 import { InputProps } from './types';
 import { BUTTON_CLASSES } from './style';
 
-export function Input({ className, label, name, id, type, error }: InputProps) {
+export function Input({ className, label, name, id, type, error, onChange }: InputProps) {
   const hasError: boolean = !!error;
+
+  function handleChange(event) {
+    if (onChange) onChange(event);
+  }
 
   function getInputClass() {
     return hasError ? BUTTON_CLASSES.ERROR.input : BUTTON_CLASSES.DEFAULT.input;
@@ -29,6 +33,7 @@ export function Input({ className, label, name, id, type, error }: InputProps) {
         id={id}
         name={name}
         className={`h-8 w-full rounded-xl border border-solid border-black pl-1 ${getInputClass()}`}
+        onChange={handleChange}
       />
       {renderErrorMessage()}
     </div>
