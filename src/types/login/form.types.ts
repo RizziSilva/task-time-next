@@ -5,4 +5,6 @@ export interface LoginFormState {
   email?: FormDataEntryValue | null;
   errorMessage?: string;
   fieldErrors?: Array<FormError>;
+  user?: any;
+  isValid: boolean;
 }

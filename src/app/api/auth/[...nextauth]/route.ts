@@ -2,7 +2,7 @@ import { ROUTES } from '@/constants';
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-export const options: NextAuthOptions = {
+export const OPTIONS: NextAuthOptions = {
   session: {
     strategy: 'jwt',
   },
@@ -31,15 +31,14 @@ export const options: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, req) {
-        const email = credentials?.email;
-        const password = credentials?.password;
+        console.log('credentials', credentials.test);
 
-        return { userName: 'Emerson Dias', email: 'emerson.fraga@gmail.com', id: 1 };
+        return { test: credentials.test };
       },
     }),
   ],
 };
 
-const handler = NextAuth(options);
+const handler = NextAuth(OPTIONS);
 
 export { handler as GET, handler as POST };

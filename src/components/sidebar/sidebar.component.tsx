@@ -7,10 +7,11 @@ import { ROUTES } from '@constants';
 import { useSidebarHook } from './useSidebar.hook';
 import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
 import { SidebarItemsType } from './types';
+import { useSession } from 'next-auth/react';
 
 export function Sidebar() {
   const { getIsSelected, handleToggleMenu, toggleMenu } = useSidebarHook();
-
+  console.log(useSession());
   function renderHeader() {
     return (
       <div className='flex h-20 w-full items-center justify-center border-b-2 border-solid border-background-color-darken p-sidebar-padding pb-4'>

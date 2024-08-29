@@ -1,7 +1,6 @@
 'use server';
 
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { LoginFormState, Tokens, FormError } from '@types';
 import { AuthService } from '@services';
@@ -27,7 +26,7 @@ const loginValidation = z
   })
   .required();
 
-async function handleLogin(password: string, email: string): Promise<void> {
+async function handleLogin(password: string, email: string): Promise<Tokens> {
   try {
     const authService: AuthService = new AuthService();
     const response = await authService.login({ email, password });
@@ -36,8 +35,7 @@ async function handleLogin(password: string, email: string): Promise<void> {
       refreshToken: response.refresh_token,
     };
 
-    cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
-    cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
+    return tokens;
   } catch (error) {
     throw error;
   }
@@ -51,15 +49,17 @@ export async function handleLoginAction(
     const password = formData.get(FIELDS.PASSWORD.name) as string;
     const email = formData.get(FIELDS.EMAIL.name) as string;
     const errors: Array<FormError> = validateFormData(loginValidation, { email, password });
+    const hasFieldErrors: boolean = !!errors.length;
 
-    if (errors.length) return { email, password, fieldErrors: errors };
+    if (hasFieldErrors) return { email, password, fieldErrors: errors, isValid: !hasFieldErrors };
 
-    await handleLogin(password, email);
+    const user: Tokens = await handleLogin(password, email);
+
+    return { user, isValid: true };
   } catch (error) {
+    console.error(error);
     const errorMessage: string = getErrorMessage(error, DEFAULT_LOGIN_ERROR_MESSAGE);
 
-    return { errorMessage };
+    return { errorMessage, isValid: false };
   }
-
-  redirect(ROUTES.HOME);
 }
