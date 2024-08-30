@@ -2,12 +2,12 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { FullLogo, SidebarCloseIcon, SidebarMenuIcon, UserIconHolder } from '@statics';
 import { ROUTES } from '@constants';
 import { useSidebarHook } from './useSidebar.hook';
 import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
 import { SidebarItemsType } from './types';
-import { useSession } from 'next-auth/react';
 
 export function Sidebar() {
   const { getIsSelected, handleToggleMenu, toggleMenu } = useSidebarHook();

@@ -18,7 +18,8 @@ export function LoginForm() {
   useEffect(() => {
     async function handleSignIn() {
       await signIn('credentials', {
-        test: state.user,
+        accessToken: state.user.accessToken,
+        refreshToken: state.user.refreshToken,
         callbackUrl: ROUTES.TIMER,
       });
     }

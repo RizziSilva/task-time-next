@@ -10,15 +10,13 @@ export const OPTIONS: NextAuthOptions = {
     signIn: ROUTES.LOGIN,
   },
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account && account.type === 'credentials') {
-        token.userId = account.providerAccountId;
-      }
+    async jwt({ token, account, user }) {
+      if (account && account.type === 'credentials') token.user = user;
 
       return token;
     },
-    async session({ session, token }) {
-      session.user.id = token.userId;
+    async session({ session, token, user }) {
+      session.user = token.user;
 
       return session;
     },
@@ -26,14 +24,14 @@ export const OPTIONS: NextAuthOptions = {
   providers: [
     Credentials({
       name: 'credentials',
-      credentials: {
-        email: { label: 'email', type: 'text', placeholder: 'email' },
-        password: { label: 'Password', type: 'password' },
-      },
+      credentials: {},
       async authorize(credentials, req) {
-        console.log('credentials', credentials.test);
+        const { accessToken, refreshToken } = credentials as {
+          accessToken: string;
+          refreshToken: string;
+        };
 
-        return { test: credentials.test };
+        return { accessToken, refreshToken };
       },
     }),
   ],
