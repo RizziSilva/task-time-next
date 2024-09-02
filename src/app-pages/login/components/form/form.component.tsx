@@ -1,16 +1,35 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useFormState } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
+import { signIn } from 'next-auth/react';
 import { FormError } from '@types';
+import { ROUTES } from '@/constants';
 import { Input, Button } from '@components';
 import { FullLogo } from '@statics';
 import { handleLoginAction } from '../../hooks/useLogin.hook';
 import { INITIAL_STATE, LOGIN_FIELDS } from '../../constants';
+import { LoginResponseType } from '@/types/login';
 
 export function LoginForm() {
   const [state, formAction] = useFormState(handleLoginAction, INITIAL_STATE);
+
+  useEffect(() => {
+    async function handleSignIn() {
+      const user: LoginResponseType | undefined = state.user;
+
+      await signIn('credentials', {
+        user,
+        callbackUrl: ROUTES.TIMER,
+      });
+    }
+
+    const isValid: boolean = state.isValid;
+
+    if (isValid) handleSignIn();
+  }, [state.isValid]);
 
   function renderFormErrorMessage() {
     const { errorMessage } = state;

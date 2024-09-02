@@ -14,6 +14,7 @@ import {
   REQUIRED_PASSWORD_ERROR_MESSAGE,
 } from '@constants';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
+import { LoginResponseType } from '@/types/login';
 
 const loginValidation = z
   .object({
@@ -27,17 +28,12 @@ const loginValidation = z
   })
   .required();
 
-async function handleLogin(password: string, email: string): Promise<void> {
+async function handleLogin(password: string, email: string): Promise<LoginResponseType> {
   try {
     const authService: AuthService = new AuthService();
-    const response = await authService.login({ email, password });
-    const tokens: Tokens = {
-      accessToken: response.access_token,
-      refreshToken: response.refresh_token,
-    };
+    const response: LoginResponseType = await authService.login({ email, password });
 
-    cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
-    cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
+    return response;
   } catch (error) {
     throw error;
   }
@@ -51,15 +47,17 @@ export async function handleLoginAction(
     const password = formData.get(FIELDS.PASSWORD.name) as string;
     const email = formData.get(FIELDS.EMAIL.name) as string;
     const errors: Array<FormError> = validateFormData(loginValidation, { email, password });
+    const hasFieldErrors: boolean = !!errors.length;
 
-    if (errors.length) return { email, password, fieldErrors: errors };
+    if (hasFieldErrors) return { email, password, fieldErrors: errors, isValid: !hasFieldErrors };
 
-    await handleLogin(password, email);
+    const user: LoginResponseType = await handleLogin(password, email);
+
+    return { user, isValid: true };
   } catch (error) {
+    console.error(error);
     const errorMessage: string = getErrorMessage(error, DEFAULT_LOGIN_ERROR_MESSAGE);
 
-    return { errorMessage };
+    return { errorMessage, isValid: false };
   }
-
-  redirect(ROUTES.HOME);
 }
