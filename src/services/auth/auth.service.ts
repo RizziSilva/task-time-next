@@ -1,5 +1,5 @@
 import { PostRequestParameters, LoginRequestType } from '@types';
-import { postRequest } from '../request/instance.service';
+import { postRequest } from '../request/instance-server.service';
 
 export class AuthService {
   async login(requestBody: LoginRequestType): Promise<any> {

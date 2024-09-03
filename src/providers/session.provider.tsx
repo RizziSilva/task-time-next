@@ -9,5 +9,5 @@ export function CustomSession({
   children: React.ReactNode;
   session: any;
 }>) {
-  return <SessionProvider>{children}</SessionProvider>;
+  return <SessionProvider session={session}>{children}</SessionProvider>;
 }
