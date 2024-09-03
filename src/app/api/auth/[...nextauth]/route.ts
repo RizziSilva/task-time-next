@@ -1,7 +1,6 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { ROUTES } from '@/constants';
-import { LoginResponseType } from '@/types/login';
+import { ROUTES } from '@constants';
 
 export const OPTIONS: NextAuthOptions = {
   session: {
@@ -12,8 +11,7 @@ export const OPTIONS: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, user }) {
-      console.log(user);
-      if (account && account.type === 'credentials') token.user = user;
+      if (account && account.type === 'credentials') token.user = user.user;
 
       return token;
     },
@@ -27,11 +25,11 @@ export const OPTIONS: NextAuthOptions = {
     Credentials({
       name: 'credentials',
       credentials: {},
-      async authorize(credentials, req) {
-        console.log('credentials', credentials);
-        const { user } = credentials;
+      async authorize(credentials): Promise<User> {
+        const credentialsUser = credentials as { user: string };
+        const user = JSON.parse(credentialsUser.user);
 
-        return user;
+        return { user };
       },
     }),
   ],

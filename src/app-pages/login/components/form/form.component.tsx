@@ -21,7 +21,7 @@ export function LoginForm() {
       const user: LoginResponseType | undefined = state.user;
 
       await signIn('credentials', {
-        user,
+        user: JSON.stringify(user),
         callbackUrl: ROUTES.TIMER,
       });
     }
