@@ -1,11 +1,21 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { UserService } from '@services';
 
 export function useSidebarHook() {
   const [toggleMenu, setToggleMenu] = useState<boolean>(false);
+  const userService: UserService = new UserService();
   const pathname: string = usePathname();
+
+  useEffect(() => {
+    async function getUSerInfo() {
+      const user = await userService.getUser();
+    }
+
+    getUSerInfo();
+  }, []);
 
   function handleToggleMenu(): void {
     setToggleMenu(!toggleMenu);
