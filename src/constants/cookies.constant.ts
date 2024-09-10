@@ -1,4 +1,6 @@
 export const COOKIES_KEYS = {
-  ACCESS: 'ACCESS_TOKEN',
-  REFRESH: 'REFRESH_TOKEN',
+  ACCESS: 'access_token',
+  REFRESH: 'refresh_token',
 };
+
+export const COOKIE_TYPE = 'Bearer ';

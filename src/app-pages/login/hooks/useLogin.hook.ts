@@ -1,20 +1,19 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { LoginFormState, Tokens, FormError } from '@types';
-import { AuthService } from '@services';
-import { getErrorMessage, validateFormData } from '@utils';
+import { cookies } from 'next/headers';
 import {
+  API_DOMAIN,
+  COOKIE_TYPE,
   COOKIES_KEYS,
-  ROUTES,
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
   REQUIRED_PASSWORD_ERROR_MESSAGE,
 } from '@constants';
+import { AuthService } from '@services';
+import { FormError, LoginFormState, LoginResponseType, Tokens } from '@types';
+import { getErrorMessage, validateFormData } from '@utils';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
-import { LoginResponseType } from '@/types/login';
 
 const loginValidation = z
   .object({
@@ -28,11 +27,25 @@ const loginValidation = z
   })
   .required();
 
+function setTokensCookie(tokens: Tokens): void {
+  const cookiesHandler = cookies();
+  const options = {
+    domain: API_DOMAIN,
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  };
+
+  cookiesHandler.set(COOKIES_KEYS.ACCESS, `${COOKIE_TYPE}${tokens.access_token}`, options);
+  cookiesHandler.set(COOKIES_KEYS.REFRESH, `${COOKIE_TYPE}${tokens.refresh_token}`, options);
+}
+
 async function handleLogin(password: string, email: string): Promise<LoginResponseType> {
   try {
     const authService: AuthService = new AuthService();
     const response: LoginResponseType = await authService.login({ email, password });
-
+    setTokensCookie(response.token);
     return response;
   } catch (error) {
     throw error;

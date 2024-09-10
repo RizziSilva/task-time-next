@@ -7,11 +7,13 @@ async function addUserSession(headers: any, isServer: boolean = false) {
 
   if (!session) return headers;
 
-  return {
-    ...headers,
-    access_token: `Bearer ${session.token.access_token}`,
-    refresh_token: `Bearer ${session.token.refresh_token}`,
-  };
+  return headers;
+
+  // return {
+  //   ...headers,
+  //   access_token: `Bearer ${session.token.access_token}`,
+  //   refresh_token: `Bearer ${session.token.refresh_token}`,
+  // };
 }
 
 export async function postRequest({
@@ -40,5 +42,6 @@ export async function getRequest({ url, isServerSide }: GetRequestParameters): P
       },
       isServerSide,
     ),
+    credentials: 'include',
   });
 }
