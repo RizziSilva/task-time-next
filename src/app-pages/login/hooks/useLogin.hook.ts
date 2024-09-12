@@ -1,7 +1,8 @@
 'use server';
 
-import { z } from 'zod';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
 import {
   API_DOMAIN,
   COOKIE_TYPE,
@@ -9,6 +10,7 @@ import {
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
   REQUIRED_PASSWORD_ERROR_MESSAGE,
+  ROUTES,
 } from '@constants';
 import { AuthService } from '@services';
 import { FormError, LoginFormState, LoginResponseType, Tokens } from '@types';
@@ -46,6 +48,7 @@ async function handleLogin(password: string, email: string): Promise<LoginRespon
     const authService: AuthService = new AuthService();
     const response: LoginResponseType = await authService.login({ email, password });
     setTokensCookie(response.token);
+
     return response;
   } catch (error) {
     throw error;
@@ -62,15 +65,14 @@ export async function handleLoginAction(
     const errors: Array<FormError> = validateFormData(loginValidation, { email, password });
     const hasFieldErrors: boolean = !!errors.length;
 
-    if (hasFieldErrors) return { email, password, fieldErrors: errors, isValid: !hasFieldErrors };
+    if (hasFieldErrors) return { email, password, fieldErrors: errors };
 
-    const user: LoginResponseType = await handleLogin(password, email);
-
-    return { user, isValid: true };
+    await handleLogin(password, email);
+    redirect(ROUTES.TIMER);
   } catch (error) {
     console.error(error);
     const errorMessage: string = getErrorMessage(error, DEFAULT_LOGIN_ERROR_MESSAGE);
 
-    return { errorMessage, isValid: false };
+    return { errorMessage };
   }
 }

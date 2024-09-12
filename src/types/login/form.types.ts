@@ -7,5 +7,4 @@ export interface LoginFormState {
   errorMessage?: string;
   fieldErrors?: Array<FormError>;
   user?: LoginResponseType;
-  isValid: boolean;
 }

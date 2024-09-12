@@ -2,4 +2,3 @@ export type { PostRequestParameters, GetRequestParameters } from './request/requ
 export type { LoginFormState, LoginRequestType, Tokens, LoginResponseType } from './login';
 export type { FormError } from './form/error.types';
 export type { CreateUserFormState, CreateUserRequest } from './create-user';
-export type { SessionType } from './next-auth/index';
