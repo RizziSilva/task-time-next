@@ -68,11 +68,13 @@ export async function handleLoginAction(
     if (hasFieldErrors) return { email, password, fieldErrors: errors };
 
     await handleLogin(password, email);
-    redirect(ROUTES.TIMER);
   } catch (error) {
     console.error(error);
     const errorMessage: string = getErrorMessage(error, DEFAULT_LOGIN_ERROR_MESSAGE);
 
     return { errorMessage };
   }
+
+  console.log('reedirect');
+  redirect(ROUTES.TIMER);
 }

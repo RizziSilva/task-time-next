@@ -12,20 +12,26 @@ async function requestInterceptor(url: string, options: RequestInit): Promise<Re
 }
 
 export async function postRequest({ url, body }: PostRequestParameters): Promise<Response> {
+  const { cookies } = await import('next/headers');
+
   return await requestInterceptor(url, {
     method: 'POST',
     body: body,
     headers: {
       'Content-Type': 'application/json',
+      Cookie: cookies().toString(),
     },
   });
 }
 
 export async function getRequest({ url }: GetRequestParameters): Promise<Response> {
+  const { cookies } = await import('next/headers');
+
   return await requestInterceptor(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      Cookie: cookies().toString(),
     },
     credentials: 'include',
   });
