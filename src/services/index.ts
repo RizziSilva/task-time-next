@@ -1,2 +1,2 @@
-export { AuthService } from './auth/auth.service';
-export { UserService } from './user/user.service';
+export { login } from './auth/auth.service';
+export { createUser, getUser } from './user/user.service';

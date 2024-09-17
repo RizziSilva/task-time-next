@@ -4,11 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FullLogo, SidebarCloseIcon, SidebarMenuIcon, UserIconHolder } from '@statics';
 import { ROUTES } from '@constants';
-import { useSidebarHook } from './useSidebar.hook';
-import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
-import { SidebarItemsType } from './types';
+import { useSidebarHook } from './hooks/useSidebar.hook';
+import { SIDEBAR_OPTIONS, TEST_IDS } from './constants/sidebar.constant';
+import { SidebarItemsType } from './types/types';
 
-export function Sidebar() {
+export function SidebarContent({ user }) {
   const { getIsSelected, handleToggleMenu, toggleMenu } = useSidebarHook();
 
   function renderHeader() {

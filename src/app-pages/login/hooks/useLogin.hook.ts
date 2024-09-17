@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { LoginFormState, Tokens, FormError } from '@types';
-import { AuthService } from '@services';
+import { login } from '@services';
 import { getErrorMessage, validateFormData } from '@utils';
 import {
   COOKIES_KEYS,
@@ -14,6 +14,7 @@ import {
   REQUIRED_PASSWORD_ERROR_MESSAGE,
 } from '@constants';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
+import { handleTokens } from '@/app/utils/cookies/cookies.util';
 
 const loginValidation = z
   .object({
@@ -29,15 +30,9 @@ const loginValidation = z
 
 async function handleLogin(password: string, email: string): Promise<void> {
   try {
-    const authService: AuthService = new AuthService();
-    const response = await authService.login({ email, password });
-    const tokens: Tokens = {
-      accessToken: response.access_token,
-      refreshToken: response.refresh_token,
-    };
+    const response = await login({ email, password });
 
-    cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
-    cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
+    handleTokens(response.token.access_token, response.token.refresh_token);
   } catch (error) {
     throw error;
   }
