@@ -4,3 +4,5 @@ export const ROUTES = {
   TIMER: '/track',
   USER: '/auth/user',
 };
+
+export const MIDDLEWARE_ROUTES = [ROUTES.TIMER];
