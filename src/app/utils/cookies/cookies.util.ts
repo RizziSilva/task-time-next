@@ -14,32 +14,25 @@ function getCookiesFromResponse(response: Response): Array<any> {
   return [];
 }
 
-function getAccessAndRefreshTokens(cookies: Array<any>) {
-  const accessToken: string = cookies.find((cookie) => cookie[COOKIES_KEYS.ACCESS]);
-  const refreshToken: string = cookies.find((cookie) => cookie[COOKIES_KEYS.REFRESH]);
+export function getAccessAndRefreshTokens(response: Response) {
+  const cookiesFromResponse = getCookiesFromResponse(response);
+  const accessToken: string = cookiesFromResponse.find((cookie) => cookie[COOKIES_KEYS.ACCESS]);
+  const refreshToken: string = cookiesFromResponse.find((cookie) => cookie[COOKIES_KEYS.REFRESH]);
 
   return { accessToken, refreshToken };
 }
 
 export async function handleRefreshTokens(response: Response) {
-  const cookies = getCookiesFromResponse(response);
-  const tokens = getAccessAndRefreshTokens(cookies);
-
-  if (tokens.accessToken && tokens.refreshToken) {
-    await fetch(`${APP_DOMAIN}/api/auth/refresh`, {
-      method: 'POST',
-      body: JSON.stringify({
-        tokens,
-        setCookie: response.headers.get('set-cookie'),
-      }),
-    });
-  }
+  const tokens = getAccessAndRefreshTokens(response);
+  console.log('Novos tokens', tokens);
+  if (tokens.accessToken && tokens.refreshToken)
+    handleTokens(tokens.accessToken, tokens.refreshToken);
 }
 
 export function handleTokens(accessToken: string, refreshToken: string) {
   const cookieHandler = cookies();
   const accessExpirationDate: Date = new Date();
-  accessExpirationDate.setSeconds(accessExpirationDate.getSeconds() + 15);
+  accessExpirationDate.setSeconds(accessExpirationDate.getSeconds() + 5);
   const refreshExpirationDate: Date = new Date();
   refreshExpirationDate.setHours(refreshExpirationDate.getHours() + 7);
 

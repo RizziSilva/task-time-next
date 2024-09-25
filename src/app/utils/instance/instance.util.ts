@@ -1,10 +1,11 @@
 import { API_URL, ROUTES } from '@constants';
 import { GetRequestParameters, PostRequestParameters } from '@types';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { handleRefreshTokens } from '../cookies/cookies.util';
 
 function getHeaders() {
+  console.log('cookies().toString()', cookies().toString());
+
   return { Cookie: cookies().toString() };
 }
 
@@ -12,10 +13,8 @@ async function fetchInterceptor(url, options) {
   const response = await fetch(`${API_URL}${url}`, options);
   const status: number = response.status;
   const isUnauthorized: boolean = status === 401;
-
+  console.log('options', options);
   if (isUnauthorized) redirect(ROUTES.LOGIN);
-
-  handleRefreshTokens(response);
 
   return response;
 }
@@ -37,7 +36,7 @@ export async function getRequest({ url }: GetRequestParameters): Promise<Respons
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      ...getHeaders(),
+      ...headers(),
     },
     credentials: 'include',
   });

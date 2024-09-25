@@ -1,13 +1,11 @@
 'use server';
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { LoginFormState, Tokens, FormError } from '@types';
+import { LoginFormState, FormError } from '@types';
 import { login } from '@services';
 import { getErrorMessage, validateFormData } from '@utils';
 import {
-  COOKIES_KEYS,
   ROUTES,
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
@@ -32,7 +30,7 @@ async function handleLogin(password: string, email: string): Promise<void> {
   try {
     const response = await login({ email, password });
 
-    handleTokens(response.token.access_token, response.token.refresh_token);
+    handleTokens(response.access_token, response.refresh_token);
   } catch (error) {
     throw error;
   }

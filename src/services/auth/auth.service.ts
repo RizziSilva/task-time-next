@@ -12,3 +12,16 @@ export async function login(requestBody: LoginRequestType): Promise<any> {
   if (response.ok) return responseJson;
   else throw new Error(responseJson.message);
 }
+
+export async function refresh(): Promise<any> {
+  const requestOptions: PostRequestParameters = { url: '/auth/refresh', body: undefined };
+  const response: Response = await postRequest(requestOptions);
+
+  if (!response.ok) {
+    const responseJson: any = await response.json();
+
+    throw new Error(responseJson.message);
+  }
+
+  return response;
+}
