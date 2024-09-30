@@ -10,10 +10,10 @@ function getHeaders() {
 }
 
 async function fetchInterceptor(url, options) {
+  console.log('options', options);
   const response = await fetch(`${API_URL}${url}`, options);
   const status: number = response.status;
   const isUnauthorized: boolean = status === 401;
-  console.log('options', options);
   if (isUnauthorized) redirect(ROUTES.LOGIN);
 
   return response;
@@ -36,7 +36,7 @@ export async function getRequest({ url }: GetRequestParameters): Promise<Respons
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      ...headers(),
+      ...getHeaders(),
     },
     credentials: 'include',
   });
