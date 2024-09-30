@@ -5,13 +5,15 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { LoginFormState, Tokens, FormError } from '@types';
 import { AuthService } from '@services';
-import { getErrorMessage, validateFormData } from '@utils';
+import { getAccessAndRefreshExpire, getErrorMessage, validateFormData } from '@utils';
 import {
   COOKIES_KEYS,
   ROUTES,
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
   REQUIRED_PASSWORD_ERROR_MESSAGE,
+  TOKEN_TYPE,
+  COOKIE_OPTIONS,
 } from '@constants';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
@@ -35,9 +37,16 @@ async function handleLogin(password: string, email: string): Promise<void> {
       accessToken: response.access_token,
       refreshToken: response.refresh_token,
     };
+    const cookiesExpiration = getAccessAndRefreshExpire();
 
-    cookies().set(COOKIES_KEYS.ACCESS, tokens.accessToken);
-    cookies().set(COOKIES_KEYS.REFRESH, tokens.refreshToken);
+    cookies().set(COOKIES_KEYS.ACCESS, `${TOKEN_TYPE}${tokens.accessToken}`, {
+      expires: cookiesExpiration.accessExpirationDate,
+      ...COOKIE_OPTIONS,
+    });
+    cookies().set(COOKIES_KEYS.REFRESH, `${TOKEN_TYPE}${tokens.refreshToken}`, {
+      expires: cookiesExpiration.refreshExpirationDate,
+      ...COOKIE_OPTIONS,
+    });
   } catch (error) {
     throw error;
   }
