@@ -1,10 +1,10 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { Sidebar } from './sidebar.component';
-import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
+import { SidebarContent } from './sidebar.component';
+import { SIDEBAR_OPTIONS, TEST_IDS } from './constants/sidebar.constant';
 
 describe('Sidebar component tests', () => {
   it('Render sidebar correctly', async () => {
-    render(<Sidebar />);
+    render(<SidebarContent />);
 
     const userNameSpan = await screen.findByTestId(TEST_IDS.USER_NAME);
     const userEmailSpan = await screen.findByTestId(TEST_IDS.USER_EMAIL);
@@ -28,7 +28,7 @@ describe('Sidebar component tests', () => {
   });
 
   it('Render mobile sidebar correctly', async () => {
-    render(<Sidebar />);
+    render(<SidebarContent />);
 
     const sidebar = await screen.findByTestId(TEST_IDS.SIDEBAR);
     const openButton = await screen.findByTestId(TEST_IDS.OPEN_MOBILE_SIDEBAR);

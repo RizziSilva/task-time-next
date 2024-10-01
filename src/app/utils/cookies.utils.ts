@@ -1,5 +1,10 @@
-import { COOKIES_KEYS } from '@/constants';
+import { cookies } from 'next/headers';
+import { COOKIES_KEYS } from '@constants';
 import cookiesParse from 'cookie';
+
+export function getRequestHeaders() {
+  return { Cookie: cookies().toString() };
+}
 
 function getCookiesFromResponse(response: Response): Array<any> {
   const setCookies: string | null = response.headers.get('set-cookie');

@@ -20,6 +20,7 @@ const config: Config = {
     '@types': '<rootDir>/src/types',
     '@services': '<rootDir>/src/services',
     '@utils': '<rootDir>/src/utils',
+    '@cookies': '<rootDir>/src/app/utils/cookies.utils.ts',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };

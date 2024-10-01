@@ -1,6 +1,6 @@
 import { TrackSidebar } from '@statics';
-import { ROUTES } from '../../constants/routes.constants';
-import { SidebarOptionType } from './types';
+import { ROUTES } from '@/constants';
+import { SidebarOptionType } from '../types/types';
 
 export const SIDEBAR_OPTIONS: Array<SidebarOptionType> = [
   {

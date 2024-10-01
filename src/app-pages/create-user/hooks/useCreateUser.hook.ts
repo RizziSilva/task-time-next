@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { UserService } from '@services';
+import { createUser } from '@services';
 import { CreateUserFormState, CreateUserRequest, FormError } from '@types';
 import { getErrorMessage, validateFormData } from '@utils';
 import {
@@ -32,9 +32,7 @@ const createUserValidation = z
 
 async function handleCreateUser(requestBody: CreateUserRequest): Promise<void> {
   try {
-    const userService: UserService = new UserService();
-
-    await userService.createUser(requestBody);
+    await createUser(requestBody);
   } catch (error) {
     throw error;
   }

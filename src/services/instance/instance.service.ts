@@ -1,17 +1,12 @@
+'use server';
+
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+import { getRequestHeaders } from '@cookies';
 import { API_URL, ROUTES } from '@constants';
-import { PostRequestParameters } from '@types';
-
-function getRequestHeaders() {
-  console.log('cookies().toString()', cookies().toString());
-
-  return { Cookie: cookies().toString() };
-}
+import { GetRequestParameters, PostRequestParameters } from '@types';
 
 async function fetchInterceptor(url: string, options: RequestInit) {
-  console.log('options', options);
-  const response = await fetch(`${API_URL}${url}`, options);
+  const response = await fetch(url, options);
   const status: number = response.status;
   const isUnauthorized: boolean = status === 401;
 
@@ -21,9 +16,20 @@ async function fetchInterceptor(url: string, options: RequestInit) {
 }
 
 export async function postRequest({ url, body }: PostRequestParameters): Promise<Response> {
-  return await fetch(`${API_URL}${url}`, {
+  return await fetchInterceptor(`${API_URL}${url}`, {
     method: 'POST',
     body: body,
+    headers: {
+      'Content-Type': 'application/json',
+      ...getRequestHeaders(),
+    },
+    credentials: 'include',
+  });
+}
+
+export async function getRequest({ url }: GetRequestParameters): Promise<Response> {
+  return await fetchInterceptor(`${API_URL}${url}`, {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       ...getRequestHeaders(),

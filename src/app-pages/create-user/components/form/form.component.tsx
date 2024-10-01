@@ -1,13 +1,13 @@
 'use client';
 
+import Link from 'next/link';
+import Image from 'next/image';
 import { useFormState } from 'react-dom';
 import { FormError } from '@types';
 import { Button, Input } from '@components';
+import { FullLogo } from '@statics';
 import { FIELDS, INITIAL_STATE } from '../../constants';
 import { handleCreateUserAction } from '../../hooks';
-import Image from 'next/image';
-import { FullLogo } from '@/statics';
-import Link from 'next/link';
 
 export function CreateUserForm() {
   const [state, formAction] = useFormState(handleCreateUserAction, INITIAL_STATE);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getAccessAndRefreshExpire, getAccessAndRefreshTokens } from '@cookies';
 import { COOKIE_OPTIONS, COOKIES_KEYS, ROUTES, TOKEN_TYPE } from './constants';
-import { AuthService } from './services';
-import { getAccessAndRefreshExpire, getAccessAndRefreshTokens } from './utils';
+import { refresh } from './services';
 
 export async function middleware(request: NextRequest) {
   const accessToken: string | undefined = request.cookies.get(COOKIES_KEYS.ACCESS)?.value;
@@ -20,10 +20,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authService: AuthService = new AuthService();
-  const response: Response = await authService.refresh();
+  const response: Response = await refresh();
   const tokens = getAccessAndRefreshTokens(response);
-  console.log('Refreshed tokens', tokens);
   const nextResponse = NextResponse.redirect(request.nextUrl);
   const cookiesExpiration = getAccessAndRefreshExpire();
 
