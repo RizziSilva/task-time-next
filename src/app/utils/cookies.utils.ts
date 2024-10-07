@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
-import { COOKIES_KEYS } from '@constants';
 import cookiesParse from 'cookie';
+import { COOKIE_OPTIONS, COOKIES_KEYS, TOKEN_TYPE } from '@constants';
+import { CookiesExpiration, Tokens } from '@types';
 
 export function getRequestHeaders() {
   return { Cookie: cookies().toString() };
@@ -18,20 +19,36 @@ function getCookiesFromResponse(response: Response): Array<any> {
   return [];
 }
 
-export function getAccessAndRefreshTokens(response: Response) {
+export function getAccessAndRefreshTokens(response: Response): Tokens {
   const cookiesFromResponse: Array<any> = getCookiesFromResponse(response);
-  const accessToken: string = cookiesFromResponse.find((cookie) => cookie[COOKIES_KEYS.ACCESS]);
-  const refreshToken: string = cookiesFromResponse.find((cookie) => cookie[COOKIES_KEYS.REFRESH]);
+  const findedAccessToken = cookiesFromResponse.find((cookie) => cookie[COOKIES_KEYS.ACCESS]);
+  const findedRefreshToken = cookiesFromResponse.find((cookie) => cookie[COOKIES_KEYS.REFRESH]);
+  const accessToken: string = findedAccessToken ? findedAccessToken[COOKIES_KEYS.ACCESS] : '';
+  const refreshToken: string = findedRefreshToken ? findedRefreshToken[COOKIES_KEYS.REFRESH] : '';
 
   return { accessToken, refreshToken };
 }
 
-export function getAccessAndRefreshExpire() {
-  const accessExpirationDate: Date = new Date();
-  const refreshExpirationDate: Date = new Date();
+export function getAccessAndRefreshExpire(): CookiesExpiration {
+  const accessExpiration: Date = new Date();
+  const refreshExpiration: Date = new Date();
 
-  accessExpirationDate.setSeconds(accessExpirationDate.getSeconds() + 5);
-  refreshExpirationDate.setHours(refreshExpirationDate.getHours() + 7);
+  accessExpiration.setSeconds(accessExpiration.getSeconds() + 5);
+  refreshExpiration.setHours(refreshExpiration.getHours() + 7);
 
-  return { accessExpirationDate, refreshExpirationDate };
+  return { accessExpiration, refreshExpiration };
+}
+
+export function setAccessAndRefreshToken(tokens: Tokens) {
+  const cookieStore = cookies();
+  const cookiesExpiration = getAccessAndRefreshExpire();
+
+  cookieStore.set(COOKIES_KEYS.ACCESS, `${TOKEN_TYPE}${tokens.accessToken}`, {
+    expires: cookiesExpiration.accessExpiration,
+    ...COOKIE_OPTIONS,
+  });
+  cookieStore.set(COOKIES_KEYS.REFRESH, `${TOKEN_TYPE}${tokens.refreshToken}`, {
+    expires: cookiesExpiration.refreshExpiration,
+    ...COOKIE_OPTIONS,
+  });
 }

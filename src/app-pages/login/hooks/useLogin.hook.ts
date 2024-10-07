@@ -1,21 +1,17 @@
 'use server';
 
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { LoginFormState, Tokens, FormError } from '@types';
 import { login } from '@services';
 import { getErrorMessage, validateFormData } from '@utils';
 import {
-  COOKIES_KEYS,
   ROUTES,
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,
   REQUIRED_PASSWORD_ERROR_MESSAGE,
-  TOKEN_TYPE,
-  COOKIE_OPTIONS,
 } from '@constants';
-import { getAccessAndRefreshExpire } from '@cookies';
+import { setAccessAndRefreshToken } from '@cookies';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
 const loginValidation = z
@@ -37,16 +33,8 @@ async function handleLogin(password: string, email: string): Promise<void> {
       accessToken: response.access_token,
       refreshToken: response.refresh_token,
     };
-    const cookiesExpiration = getAccessAndRefreshExpire();
 
-    cookies().set(COOKIES_KEYS.ACCESS, `${TOKEN_TYPE}${tokens.accessToken}`, {
-      expires: cookiesExpiration.accessExpirationDate,
-      ...COOKIE_OPTIONS,
-    });
-    cookies().set(COOKIES_KEYS.REFRESH, `${TOKEN_TYPE}${tokens.refreshToken}`, {
-      expires: cookiesExpiration.refreshExpirationDate,
-      ...COOKIE_OPTIONS,
-    });
+    setAccessAndRefreshToken(tokens);
   } catch (error) {
     throw error;
   }

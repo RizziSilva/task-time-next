@@ -2,41 +2,56 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAccessAndRefreshExpire, getAccessAndRefreshTokens } from '@cookies';
 import { COOKIE_OPTIONS, COOKIES_KEYS, ROUTES, TOKEN_TYPE } from './constants';
 import { refresh } from './services';
+import { CookiesExpiration, Tokens } from './types';
+
+function handleLoggedUser(isLoginPage: boolean, request: NextRequest) {
+  if (isLoginPage) return NextResponse.redirect(new URL(ROUTES.TIMER, request.url));
+
+  return NextResponse.next();
+}
+
+function handleLoggedOutUser(isLoginPage: boolean, request: NextRequest) {
+  if (!isLoginPage) return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+
+  return NextResponse.next();
+}
+
+async function handleRefreshToken(request: NextRequest) {
+  try {
+    const response: Response = await refresh();
+    const tokens: Tokens = getAccessAndRefreshTokens(response);
+    const nextResponse = NextResponse.redirect(request.nextUrl);
+    const cookiesExpiration: CookiesExpiration = getAccessAndRefreshExpire();
+
+    nextResponse.cookies.set(COOKIES_KEYS.REFRESH, `${TOKEN_TYPE}${tokens.refreshToken}`, {
+      expires: cookiesExpiration.refreshExpiration,
+      ...COOKIE_OPTIONS,
+    });
+    nextResponse.cookies.set(COOKIES_KEYS.ACCESS, `${TOKEN_TYPE}${tokens.accessToken}`, {
+      expires: cookiesExpiration.accessExpiration,
+      ...COOKIE_OPTIONS,
+    });
+
+    return nextResponse;
+  } catch (error) {
+    const response = NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
+
+    response.cookies.delete(COOKIES_KEYS.REFRESH);
+
+    return response;
+  }
+}
 
 export async function middleware(request: NextRequest) {
   const accessToken: string | undefined = request.cookies.get(COOKIES_KEYS.ACCESS)?.value;
   const refreshToken: string | undefined = request.cookies.get(COOKIES_KEYS.REFRESH)?.value;
   const isLoginPage: boolean = request.nextUrl.pathname === ROUTES.LOGIN;
 
-  if (!!accessToken) {
-    if (isLoginPage) return NextResponse.redirect(new URL(ROUTES.TIMER, request.url));
+  if (!!accessToken) return handleLoggedUser(isLoginPage, request);
 
-    return NextResponse.next();
-  }
+  if (!refreshToken) return handleLoggedOutUser(isLoginPage, request);
 
-  if (!refreshToken) {
-    if (!isLoginPage) return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
-
-    return NextResponse.next();
-  }
-
-  const response: Response = await refresh();
-  const tokens = getAccessAndRefreshTokens(response);
-  const nextResponse = NextResponse.redirect(request.nextUrl);
-  const cookiesExpiration = getAccessAndRefreshExpire();
-
-  nextResponse.cookies.set(
-    COOKIES_KEYS.REFRESH,
-    `${TOKEN_TYPE}${tokens.refreshToken[COOKIES_KEYS.REFRESH]}`,
-    { expires: cookiesExpiration.refreshExpirationDate, ...COOKIE_OPTIONS },
-  );
-  nextResponse.cookies.set(
-    COOKIES_KEYS.ACCESS,
-    `${TOKEN_TYPE}${tokens.accessToken[COOKIES_KEYS.ACCESS]}`,
-    { expires: cookiesExpiration.accessExpirationDate, ...COOKIE_OPTIONS },
-  );
-
-  return nextResponse;
+  return await handleRefreshToken(request);
 }
 
 export const config = {
