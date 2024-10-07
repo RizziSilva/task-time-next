@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { CreateUserFormState, FormError } from '@types';
 import { REQUIRED_EMAIL_ERROR_MESSAGE, ROUTES } from '@constants';
-import { UserService } from '@services';
+import * as services from '@services';
 import * as utils from '@utils';
 import { CREATE_USER_DEFAULT_ERROR_MESSAGE, FIELDS_KEYS } from '../constants';
 import { handleCreateUserAction } from './useCreateUser.hook';
@@ -28,10 +28,10 @@ describe('UseCreateUser hook tests', () => {
     formData.append(FIELDS_KEYS.PASSWORD.name, password);
 
     jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
-    const createUserSpy = jest.spyOn(UserService.prototype, 'createUser').mockResolvedValueOnce({});
+    jest.spyOn(services, 'createUser').mockResolvedValueOnce({});
     await handleCreateUserAction(state, formData);
 
-    expect(createUserSpy).toHaveBeenCalled();
+    expect(services.createUser).toHaveBeenCalled();
     expect(utils.validateFormData).toHaveBeenCalled();
     expect(redirect).toHaveBeenCalledWith(ROUTES.LOGIN);
   });
@@ -50,15 +50,16 @@ describe('UseCreateUser hook tests', () => {
     formData.append(FIELDS_KEYS.NAME.name, name);
     formData.append(FIELDS_KEYS.PASSWORD.name, password);
 
-    jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
-    jest.spyOn(utils, 'getErrorMessage').mockReturnValueOnce(CREATE_USER_DEFAULT_ERROR_MESSAGE);
-    const createUserSpy = jest.spyOn(UserService.prototype, 'createUser').mockImplementation(() => {
+    jest.spyOn(services, 'createUser').mockImplementation(() => {
       throw new Error();
     });
+    jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
+    jest.spyOn(utils, 'getErrorMessage').mockReturnValueOnce(CREATE_USER_DEFAULT_ERROR_MESSAGE);
+
     const result: CreateUserFormState = await handleCreateUserAction(state, formData);
 
     expect(result).toEqual(expected);
-    expect(createUserSpy).toHaveBeenCalled();
+    expect(services.createUser).toHaveBeenCalled();
     expect(utils.validateFormData).toHaveBeenCalled();
     expect(redirect).not.toHaveBeenCalled();
   });
@@ -77,15 +78,16 @@ describe('UseCreateUser hook tests', () => {
     formData.append(FIELDS_KEYS.NAME.name, name);
     formData.append(FIELDS_KEYS.PASSWORD.name, password);
 
-    jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
-    jest.spyOn(utils, 'getErrorMessage').mockReturnValueOnce(CREATE_USER_DEFAULT_ERROR_MESSAGE);
-    const createUserSpy = jest.spyOn(UserService.prototype, 'createUser').mockImplementation(() => {
+    jest.spyOn(services, 'createUser').mockImplementation(() => {
       throw new Error();
     });
+    jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
+    jest.spyOn(utils, 'getErrorMessage').mockReturnValueOnce(CREATE_USER_DEFAULT_ERROR_MESSAGE);
+
     const result: CreateUserFormState = await handleCreateUserAction(state, formData);
 
     expect(result).toEqual(expected);
-    expect(createUserSpy).toHaveBeenCalled();
+    expect(services.createUser).toHaveBeenCalled();
     expect(utils.validateFormData).toHaveBeenCalled();
     expect(redirect).not.toHaveBeenCalled();
   });
@@ -111,13 +113,13 @@ describe('UseCreateUser hook tests', () => {
     formData.append(FIELDS_KEYS.NAME.name, name);
     formData.append(FIELDS_KEYS.PASSWORD.name, password);
 
+    jest.spyOn(services, 'createUser');
     jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([emailError]);
-    const createUserSpy = jest.spyOn(UserService.prototype, 'createUser');
     const result: CreateUserFormState = await handleCreateUserAction(state, formData);
 
     expect(result).toEqual(expected);
     expect(utils.validateFormData).toHaveBeenCalled();
-    expect(createUserSpy).not.toHaveBeenCalled();
+    expect(services.createUser).not.toHaveBeenCalled();
     expect(redirect).not.toHaveBeenCalled();
   });
 });
