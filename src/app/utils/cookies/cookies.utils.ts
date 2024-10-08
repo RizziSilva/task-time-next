@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import cookiesParse from 'cookie';
-import { COOKIE_OPTIONS, COOKIES_KEYS, TOKEN_TYPE } from '@constants';
+import { COOKIE_OPTIONS, COOKIES_EXPIRATION_TIME, COOKIES_KEYS, TOKEN_TYPE } from '@constants';
 import { CookiesExpiration, Tokens } from '@types';
 
 export function getRequestHeaders() {
@@ -33,8 +33,12 @@ export function getAccessAndRefreshExpire(): CookiesExpiration {
   const accessExpiration: Date = new Date();
   const refreshExpiration: Date = new Date();
 
-  accessExpiration.setSeconds(accessExpiration.getSeconds() + 5);
-  refreshExpiration.setHours(refreshExpiration.getHours() + 7);
+  accessExpiration.setSeconds(
+    accessExpiration.getSeconds() + COOKIES_EXPIRATION_TIME[COOKIES_KEYS.ACCESS],
+  );
+  refreshExpiration.setHours(
+    refreshExpiration.getHours() + COOKIES_EXPIRATION_TIME[COOKIES_KEYS.REFRESH],
+  );
 
   return { accessExpiration, refreshExpiration };
 }

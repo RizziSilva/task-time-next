@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAccessAndRefreshExpire, getAccessAndRefreshTokens } from '@cookies';
+import { getAccessAndRefreshExpire, getAccessAndRefreshTokens } from '@app-utils';
 import { COOKIE_OPTIONS, COOKIES_KEYS, ROUTES, TOKEN_TYPE } from './constants';
 import { refresh } from './services';
 import { CookiesExpiration, Tokens } from './types';

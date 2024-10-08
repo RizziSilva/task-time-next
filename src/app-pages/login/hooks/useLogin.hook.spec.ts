@@ -1,9 +1,9 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { AuthService } from '@services';
-import { ROUTES, REQUIRED_EMAIL_ERROR_MESSAGE } from '@constants';
-import { FormError, LoginFormState } from '@types';
+import * as services from '@services';
 import * as utils from '@utils';
+import * as appUtils from '@app-utils';
+import { ROUTES, REQUIRED_EMAIL_ERROR_MESSAGE } from '@constants';
+import { FormError, LoginFormState, Tokens } from '@types';
 import { handleLoginAction } from './useLogin.hook';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
@@ -11,39 +11,35 @@ jest.mock('@services');
 
 jest.mock('@utils');
 
+jest.mock('@app-utils');
+
 jest.mock('next/navigation', () => ({
   ...jest.requireActual('next/navigation'),
   redirect: jest.fn(),
-}));
-
-jest.mock('next/headers', () => ({
-  ...jest.requireActual('next/headers'),
-  cookies: jest.fn(() => ({
-    set: jest.fn(),
-  })),
 }));
 
 describe('UseLogin hook tests', () => {
   describe('handleLoginAction tests', () => {
     it('Save cookies and redirect to home on request success', async () => {
       const formState: LoginFormState = {};
-      const loginResponse: any = { access_token: 'access_token', refresh_token: 'refresh_token' };
+      const loginResponse: Tokens = {
+        accessToken: 'access_token',
+        refreshToken: 'refresh_token',
+      };
       const formData: FormData = new FormData();
 
       formData.append('email', 'test@email.com');
       formData.append('password', 'testePassword');
 
-      const loginRequestSpy = jest
-        .spyOn(AuthService.prototype, 'login')
-        .mockResolvedValueOnce(loginResponse);
+      const loginRequestSpy = jest.spyOn(services, 'login').mockResolvedValueOnce(loginResponse);
       jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
+      jest.spyOn(appUtils, 'setAccessAndRefreshToken');
 
       const result: LoginFormState = await handleLoginAction(formState, formData);
 
-      // TODO silva.william 22/05/2024: Assert that cookies().set instead of cookies gets called 2 times.
       expect(result).toBeUndefined();
       expect(redirect).toHaveBeenCalledWith(ROUTES.HOME);
-      expect(cookies).toHaveBeenCalledTimes(2);
+      expect(appUtils.setAccessAndRefreshToken).toHaveBeenCalled();
       expect(loginRequestSpy).toHaveBeenCalled();
     });
 
@@ -55,7 +51,7 @@ describe('UseLogin hook tests', () => {
       formData.append('email', 'test@email.com');
       formData.append('password', 'testePassword');
 
-      const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login').mockImplementation(() => {
+      const loginRequestSpy = jest.spyOn(services, 'login').mockImplementation(() => {
         throw new Error();
       });
       jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([]);
@@ -83,7 +79,7 @@ describe('UseLogin hook tests', () => {
         message: REQUIRED_EMAIL_ERROR_MESSAGE,
       };
       const expected: LoginFormState = { ...formState, fieldErrors: [formError] };
-      const loginRequestSpy = jest.spyOn(AuthService.prototype, 'login');
+      const loginRequestSpy = jest.spyOn(services, 'login');
 
       jest.spyOn(utils, 'validateFormData').mockReturnValueOnce([formError]);
 

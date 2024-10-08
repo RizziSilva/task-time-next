@@ -11,7 +11,7 @@ import {
   REQUIRED_EMAIL_ERROR_MESSAGE,
   REQUIRED_PASSWORD_ERROR_MESSAGE,
 } from '@constants';
-import { setAccessAndRefreshToken } from '@cookies';
+import { setAccessAndRefreshToken } from '@app-utils';
 import { DEFAULT_LOGIN_ERROR_MESSAGE, FIELDS } from '../constants';
 
 const loginValidation = z

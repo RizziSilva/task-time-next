@@ -1,7 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { getRequestHeaders } from '@cookies';
+import { getRequestHeaders } from '@app-utils';
 import { API_URL, ROUTES } from '@constants';
 import { GetRequestParameters, PostRequestParameters } from '@types';
 

@@ -14,3 +14,8 @@ export const COOKIE_OPTIONS = {
   secure: process.env.NODE_ENV === 'production',
   sameSite: true,
 };
+
+export const COOKIES_EXPIRATION_TIME = {
+  [COOKIES_KEYS.ACCESS]: 5,
+  [COOKIES_KEYS.REFRESH]: 7,
+};
