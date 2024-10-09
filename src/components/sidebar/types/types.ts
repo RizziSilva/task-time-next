@@ -1,3 +1,5 @@
+import { User } from '@types';
+
 export interface SidebarItemsType {
   text: string;
   page: string;
@@ -8,4 +10,8 @@ export interface SidebarItemsType {
 export interface SidebarOptionType {
   title: string;
   items: Array<SidebarItemsType>;
+}
+
+export interface SidebarType {
+  user: User;
 }

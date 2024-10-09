@@ -1,10 +1,13 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { Sidebar } from './sidebar.component';
-import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
+import { User } from '@types';
+import { SidebarContent } from './sidebar.component';
+import { SIDEBAR_OPTIONS, TEST_IDS } from './constants/sidebar.constant';
 
 describe('Sidebar component tests', () => {
   it('Render sidebar correctly', async () => {
-    render(<Sidebar />);
+    const user: User = { email: 'email@test.com', name: 'Test Name' };
+
+    render(<SidebarContent user={user} />);
 
     const userNameSpan = await screen.findByTestId(TEST_IDS.USER_NAME);
     const userEmailSpan = await screen.findByTestId(TEST_IDS.USER_EMAIL);
@@ -22,13 +25,15 @@ describe('Sidebar component tests', () => {
       }
     }
 
-    expect(userNameSpan).toBeInTheDocument();
-    expect(userEmailSpan).toBeInTheDocument();
+    expect(userNameSpan).toHaveTextContent(user.name);
+    expect(userEmailSpan).toHaveTextContent(user.email);
     expect(logoImages).toBeInTheDocument();
   });
 
   it('Render mobile sidebar correctly', async () => {
-    render(<Sidebar />);
+    const user: User = { email: 'email@test.com', name: 'Test Name' };
+
+    render(<SidebarContent user={user} />);
 
     const sidebar = await screen.findByTestId(TEST_IDS.SIDEBAR);
     const openButton = await screen.findByTestId(TEST_IDS.OPEN_MOBILE_SIDEBAR);

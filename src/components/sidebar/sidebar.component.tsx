@@ -4,11 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FullLogo, SidebarCloseIcon, SidebarMenuIcon, UserIconHolder } from '@statics';
 import { ROUTES } from '@constants';
-import { useSidebarHook } from './useSidebar.hook';
-import { SIDEBAR_OPTIONS, TEST_IDS } from './sidebar.constant';
-import { SidebarItemsType } from './types';
+import { useSidebarHook } from './hooks/useSidebar.hook';
+import { SidebarItemsType, SidebarType } from './types/types';
+import { SIDEBAR_OPTIONS, TEST_IDS } from './constants/sidebar.constant';
 
-export function Sidebar() {
+export function SidebarContent({ user }: SidebarType) {
   const { getIsSelected, handleToggleMenu, toggleMenu } = useSidebarHook();
 
   function renderHeader() {
@@ -51,10 +51,10 @@ export function Sidebar() {
           />
           <div className='flex w-[calc(100%-theme(spacing.2)-theme(spacing.3)-30px)] flex-col '>
             <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
-              <span data-testid={TEST_IDS.USER_NAME}>William Rizzi da Silva</span>
+              <span data-testid={TEST_IDS.USER_NAME}>{user.name}</span>
             </div>
             <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
-              <span data-testid={TEST_IDS.USER_EMAIL}>William@hotmail.com</span>
+              <span data-testid={TEST_IDS.USER_EMAIL}>{user.email}</span>
             </div>
           </div>
         </div>
