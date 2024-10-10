@@ -4,18 +4,21 @@ export const FIELD_KEYS = {
   LINK: 'link',
 };
 
-export const FIELDS = [
-  {
-    name: FIELD_KEYS.TITLE,
-    placeholder: 'Título*',
-  },
+export const TITLE_FIELD = {
+  name: FIELD_KEYS.TITLE,
+  placeholder: 'No que você está trabalhando?',
+};
+
+export const ADDITIONAL_FIELDS = [
   {
     name: FIELD_KEYS.DESCRIPTION,
     placeholder: 'Descrição',
+    hasBorder: true,
   },
   {
     name: FIELD_KEYS.LINK,
     placeholder: 'Link para Tarefa',
+    hasBorder: false,
   },
 ];
 

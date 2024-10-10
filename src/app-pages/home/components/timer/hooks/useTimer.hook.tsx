@@ -3,6 +3,7 @@ import { INITIAL_STATE } from '../../../constants';
 
 export function useTimer() {
   const [task, setTask] = useState(INITIAL_STATE);
+  const [isAdditionalInfoOpen, setIsAdditionalInfoOpen] = useState(false);
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -10,8 +11,14 @@ export function useTimer() {
     setTask({ ...task, [name]: value });
   }
 
+  function handleAdditionalInfoButtonClick() {
+    setIsAdditionalInfoOpen(!isAdditionalInfoOpen);
+  }
+
   return {
     handleInputChange,
     task,
+    handleAdditionalInfoButtonClick,
+    isAdditionalInfoOpen,
   };
 }
