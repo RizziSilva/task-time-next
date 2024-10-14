@@ -8,7 +8,7 @@ export default function TrackLayout({
   return (
     <section className='flex h-full w-full bg-background-base text-base small-screen:flex-col'>
       <Sidebar />
-      <div className='ml-sidebar-width w-full'>{children}</div>
+      <div className='ml-sidebar-width w-full small-screen:ml-0'>{children}</div>
     </section>
   );
 }

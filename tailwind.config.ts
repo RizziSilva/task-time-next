@@ -26,6 +26,8 @@ const config: Config = {
         'background-color-light': '#1f0f29',
         'icons-color': '#a789b1',
         'font-color': '#ebe7eb',
+        'timer-input-font-color': '#dbcae2',
+        'timer-input-placeholder-font-color': '#8e6f9b',
         'red-base': '#D65C56',
         'red-darken': '#BC4B45',
         'error-red': '#E32817',

@@ -4,20 +4,26 @@ export const FIELD_KEYS = {
   LINK: 'link',
 };
 
+export const INPUTS_LABELS = {
+  [FIELD_KEYS.DESCRIPTION]: 'Descrição',
+  [FIELD_KEYS.LINK]: 'Link para Tarefa',
+  [FIELD_KEYS.TITLE]: 'No que você está trabalhando?',
+};
+
 export const TITLE_FIELD = {
   name: FIELD_KEYS.TITLE,
-  placeholder: 'No que você está trabalhando?',
+  placeholder: INPUTS_LABELS[FIELD_KEYS.TITLE],
 };
 
 export const ADDITIONAL_FIELDS = [
   {
     name: FIELD_KEYS.DESCRIPTION,
-    placeholder: 'Descrição',
+    placeholder: INPUTS_LABELS[FIELD_KEYS.DESCRIPTION],
     hasBorder: true,
   },
   {
     name: FIELD_KEYS.LINK,
-    placeholder: 'Link para Tarefa',
+    placeholder: INPUTS_LABELS[FIELD_KEYS.LINK],
     hasBorder: false,
   },
 ];

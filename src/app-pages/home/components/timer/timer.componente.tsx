@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowDown } from '@statics';
-import { ADDITIONAL_FIELDS, TITLE_FIELD } from '../../constants';
+import { ADDITIONAL_FIELDS, TEST_IDS, TITLE_FIELD } from '../../constants';
 import { useTimer } from './hooks/useTimer.hook';
 import Image from 'next/image';
 
@@ -12,15 +12,17 @@ export function TaskTimer() {
   function renderAdditionalFieldsButton() {
     return (
       <button
+        data-testid={TEST_IDS.ADDITIONAL_INFO_BUTTON}
         onClick={handleAdditionalInfoButtonClick}
-        className='bg-background-light absolute bottom-0 left-0 flex h-6 w-6 items-center justify-center rounded-md'
+        className='absolute bottom-0 left-0 flex h-6 w-6 items-center justify-center rounded-md bg-background-light'
       >
         <Image
           style={{ objectFit: 'contain' }}
           src={ArrowDown}
           width={20}
           alt='Ícone para abrir os inputs de informações adicionais da tarefa.'
-          className='fill-icons-color'
+          className={`${isAdditionalInfoOpen ? '' : 'rotate-180'} fill-icons-color transition-transform duration-200 ease-in-out`}
+          data-testid={TEST_IDS.ADDITIONAL_INFO_ICON}
         />
       </button>
     );
@@ -36,7 +38,7 @@ export function TaskTimer() {
         name={name}
         onChange={handleInputChange}
         value={task[name]}
-        className='bg-background-light h-full w-full border-none px-5 outline-none'
+        className='placeholder:text-timer-input-placeholder-font-color text-timer-input-font-color h-full w-full border-none bg-background-light px-5 outline-none'
       />
     );
   }
@@ -49,17 +51,20 @@ export function TaskTimer() {
         name={name}
         onChange={handleInputChange}
         value={task[name]}
-        className={`${hasBorder ? 'border-b-2 border-background-base' : 'border-none'} bg-background-light h-full w-full px-5 outline-none`}
+        className={`${hasBorder ? 'border-b-2 border-background-base' : 'border-none'} placeholder:text-timer-input-placeholder-font-color text-timer-input-font-color h-full w-full bg-background-light px-5 outline-none`}
       />
     ));
   }
 
   function renderInputs() {
     return (
-      <div className='bg-background-light relative flex h-20 w-full items-center justify-start'>
+      <div className='relative flex h-20 w-full items-center justify-start bg-background-light'>
         {renderTitleField()}
         {renderAdditionalFieldsButton()}
-        <div className='transition-height absolute top-[calc(theme(spacing.20)+5px)] flex h-full w-full flex-col duration-200 ease-in-out'>
+        <div
+          className={`${isAdditionalInfoOpen ? 'h-full' : 'h-0'} absolute top-[calc(theme(spacing.20)+2px)] flex  w-full flex-col transition-height duration-200 ease-in-out`}
+          data-testid={TEST_IDS.ADDITIONAL_INFO_CONTAINER}
+        >
           {renderAdditionalInputs()}
         </div>
       </div>
