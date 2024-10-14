@@ -13,7 +13,7 @@ export function SidebarContent({ user }: SidebarType) {
 
   function renderHeader() {
     return (
-      <div className='flex h-20 w-full items-center justify-center border-b-2 border-solid border-background-color-darken p-sidebar-padding pb-4'>
+      <div className='flex h-20 w-full items-center border-b-2 border-solid border-background-color-darken p-sidebar-padding pb-4'>
         <button
           onClick={handleToggleMenu}
           className=' mr-3 hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-#412a4c small-screen:flex'
@@ -40,7 +40,7 @@ export function SidebarContent({ user }: SidebarType) {
 
   function renderFooter() {
     return (
-      <Link href={ROUTES.USER}>
+      <Link className='max-w-full' href={ROUTES.USER}>
         <div className='flex w-full justify-start border-t-2 border-solid border-background-color-darken p-sidebar-padding pt-4'>
           <Image
             className='mr-2'
@@ -49,7 +49,7 @@ export function SidebarContent({ user }: SidebarType) {
             alt='Imagem do perfil do usuário'
             src={UserIconHolder}
           />
-          <div className='flex w-[calc(100%-theme(spacing.2)-theme(spacing.3)-30px)] flex-col '>
+          <div className='flex w-[calc(100%-theme(spacing.2)-30px)] flex-col '>
             <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
               <span data-testid={TEST_IDS.USER_NAME}>{user.name}</span>
             </div>

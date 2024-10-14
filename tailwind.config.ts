@@ -20,12 +20,16 @@ const config: Config = {
         'sidebar-bg-selected': '#a04a97',
         'sidebar-bg-hover': '#412a4c',
         'sidebar-option-font-color': '#95899A',
+        'background-base': '#130C18',
+        'background-light': '#1f0f29',
         'background-color-darken': '#130c18',
         'background-color-light': '#1f0f29',
+        'icons-color': '#a789b1',
         'font-color': '#ebe7eb',
+        'timer-input-font-color': '#dbcae2',
+        'timer-input-placeholder-font-color': '#8e6f9b',
         'red-base': '#D65C56',
         'red-darken': '#BC4B45',
-        'background-base': '#E2D9C2',
         'error-red': '#E32817',
       },
       spacing: {
@@ -37,6 +41,9 @@ const config: Config = {
       },
       lineHeight: {
         full: '100%',
+      },
+      transitionProperty: {
+        height: 'height',
       },
     },
   },
