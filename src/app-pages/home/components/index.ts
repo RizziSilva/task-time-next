@@ -1,1 +1,1 @@
-export { TaskTimer } from './timer/timer.componente';
+export { TaskTimer } from './task-timer/taskTimer.componente';

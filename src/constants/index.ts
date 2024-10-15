@@ -12,3 +12,8 @@ export {
   REQUIRED_PASSWORD_ERROR_MESSAGE,
 } from './messages.constant';
 export { TEST_IDS } from './testIds.constant';
+export {
+  ONE_HOUR_IN_SECONDS,
+  ONE_MINUTE_IN_SECONDS,
+  ADD_ZERO_MINIMUM_VALUE,
+} from './timer.constant';

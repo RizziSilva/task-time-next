@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { TaskTimer } from './timer.componente';
+import { TaskTimer } from './taskTimer.componente';
 import { FIELD_KEYS, INPUTS_LABELS, TEST_IDS } from '../../constants';
 
 describe('TaskTimer Tests', () => {

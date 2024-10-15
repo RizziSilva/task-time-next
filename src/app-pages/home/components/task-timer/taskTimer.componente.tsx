@@ -1,9 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { ArrowDown } from '@statics';
 import { ADDITIONAL_FIELDS, TEST_IDS, TITLE_FIELD } from '../../constants';
-import { useTimer } from './hooks/useTimer.hook';
-import Image from 'next/image';
+import { useTimer } from './hooks/useTaskTimer.hook';
+import { Timer } from '../timer/timer';
 
 export function TaskTimer() {
   const { handleInputChange, task, handleAdditionalInfoButtonClick, isAdditionalInfoOpen } =
@@ -38,7 +39,7 @@ export function TaskTimer() {
         name={name}
         onChange={handleInputChange}
         value={task[name]}
-        className='placeholder:text-timer-input-placeholder-font-color text-timer-input-font-color h-full w-full border-none bg-background-light px-5 outline-none'
+        className='h-full w-full border-none bg-background-light px-5 text-timer-input-font-color outline-none placeholder:text-timer-input-placeholder-font-color'
       />
     );
   }
@@ -51,7 +52,7 @@ export function TaskTimer() {
         name={name}
         onChange={handleInputChange}
         value={task[name]}
-        className={`${hasBorder ? 'border-b-2 border-background-base' : 'border-none'} placeholder:text-timer-input-placeholder-font-color text-timer-input-font-color h-full w-full bg-background-light px-5 outline-none`}
+        className={`${hasBorder ? 'border-b-2 border-background-base' : 'border-none'} h-full w-full bg-background-light px-5 text-timer-input-font-color outline-none placeholder:text-timer-input-placeholder-font-color`}
       />
     ));
   }
@@ -61,6 +62,7 @@ export function TaskTimer() {
       <div className='relative flex h-20 w-full items-center justify-start bg-background-light'>
         {renderTitleField()}
         {renderAdditionalFieldsButton()}
+        <Timer />
         <div
           className={`${isAdditionalInfoOpen ? 'h-full' : 'h-0'} absolute top-[calc(theme(spacing.20)+2px)] flex  w-full flex-col transition-height duration-200 ease-in-out`}
           data-testid={TEST_IDS.ADDITIONAL_INFO_CONTAINER}
