@@ -6,9 +6,14 @@ import { ADDITIONAL_FIELDS, TEST_IDS, TITLE_FIELD } from '../../constants';
 import { useTimer } from './hooks/useTaskTimer.hook';
 import { Timer } from '../timer/timer';
 
-export function TaskTimer() {
-  const { handleInputChange, task, handleAdditionalInfoButtonClick, isAdditionalInfoOpen } =
-    useTimer();
+export function TaskTimer({ setNewTask }) {
+  const {
+    handleInputChange,
+    task,
+    setTask,
+    handleAdditionalInfoButtonClick,
+    isAdditionalInfoOpen,
+  } = useTimer();
 
   function renderAdditionalFieldsButton() {
     return (
@@ -62,7 +67,7 @@ export function TaskTimer() {
       <div className='relative flex h-20 w-full items-center justify-start bg-background-light'>
         {renderTitleField()}
         {renderAdditionalFieldsButton()}
-        <Timer />
+        <Timer setNewTask={setNewTask} task={task} setTask={setTask} />
         <div
           className={`${isAdditionalInfoOpen ? 'h-full' : 'h-0'} absolute top-[calc(theme(spacing.20)+2px)] flex  w-full flex-col transition-height duration-200 ease-in-out`}
           data-testid={TEST_IDS.ADDITIONAL_INFO_CONTAINER}

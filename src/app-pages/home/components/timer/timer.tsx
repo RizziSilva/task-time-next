@@ -3,8 +3,8 @@
 import { useTimer } from './hook/useTimer.hook';
 import Image from 'next/image';
 
-export function Timer() {
-  const { getButtonIcon, handleTimerClick, getTimerToShow } = useTimer();
+export function Timer({ setNewTask, task, setTask }) {
+  const { getButtonIcon, handleTimerClick, getTimerToShow } = useTimer(setNewTask, task, setTask);
 
   function renderPlayStopButton() {
     return (

@@ -1,8 +1,8 @@
 import { ChangeEvent, useState } from 'react';
-import { INITIAL_STATE } from '../../../constants';
+import { INITIAL_TASK_STATE } from '../../../constants';
 
 export function useTimer() {
-  const [task, setTask] = useState(INITIAL_STATE);
+  const [task, setTask] = useState(INITIAL_TASK_STATE);
   const [isAdditionalInfoOpen, setIsAdditionalInfoOpen] = useState(false);
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
@@ -20,5 +20,6 @@ export function useTimer() {
     task,
     handleAdditionalInfoButtonClick,
     isAdditionalInfoOpen,
+    setTask,
   };
 }
