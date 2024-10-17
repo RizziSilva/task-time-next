@@ -1,12 +1,15 @@
+'use client';
+
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { PlayIcon, StopIcon } from '@statics';
 import { getErrorMessage, getFormmatedTimesFromSeconds } from '@utils';
+import { createTask } from '@services';
 import { CREATE_TASK_ERROR_MESAGE, FIELD_KEYS, INITIAL_TASK_STATE } from '../../../constants';
-import { createTask } from '@/services';
 
 export function useTimer(setNewTask, task, setTask) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [timer, setTimer] = useState(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(0);
   let count: NodeJS.Timeout;
 
   useEffect(() => {
@@ -24,7 +27,7 @@ export function useTimer(setNewTask, task, setTask) {
     };
   }, [isPlaying]);
 
-  function getTimerToShow() {
+  function getTimerToShow(): string {
     const values = getFormmatedTimesFromSeconds(timer);
 
     return `${values.hours}:${values.minutes}:${values.seconds}`;
@@ -35,22 +38,24 @@ export function useTimer(setNewTask, task, setTask) {
       const now = new Date();
       const body = { ...task, [FIELD_KEYS.ENDED_AT]: now };
       const { data } = await createTask(body);
-      console.log('tarefa criada', data);
+
       setNewTask(data);
       setTask(INITIAL_TASK_STATE);
     } catch (error) {
       console.error(error);
-      // TODO silva.william: Adicionar toaster para aviso de erros ou adicionar tratativa de aviso para esse caso.
-      // const errorMessage = getErrorMessage(error, CREATE_TASK_ERROR_MESAGE);
+
+      const errorMessage = getErrorMessage(error, CREATE_TASK_ERROR_MESAGE);
+
+      toast.error(errorMessage);
     }
   }
 
-  function handleTimerClick() {
+  async function handleTimerClick() {
     if (!isPlaying) {
       const now = new Date();
 
       setTask({ ...task, [FIELD_KEYS.INITIATED_AT]: now });
-    } else handleCreateTask();
+    } else await handleCreateTask();
 
     setIsPlaying(!isPlaying);
   }

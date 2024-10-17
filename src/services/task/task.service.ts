@@ -1,3 +1,5 @@
+'use server';
+
 import { PostRequestParameters } from '@types';
 import { postRequest } from '../instance/instance.service';
 

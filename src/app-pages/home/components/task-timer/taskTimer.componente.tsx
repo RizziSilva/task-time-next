@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { ArrowDown } from '@statics';
+import { AdditionalInput } from '@types';
 import { ADDITIONAL_FIELDS, TEST_IDS, TITLE_FIELD } from '../../constants';
 import { useTimer } from './hooks/useTaskTimer.hook';
 import { Timer } from '../timer/timer';
@@ -50,7 +51,7 @@ export function TaskTimer({ setNewTask }) {
   }
 
   function renderAdditionalInputs() {
-    return ADDITIONAL_FIELDS.map(({ name, placeholder, hasBorder }) => (
+    return ADDITIONAL_FIELDS.map(({ name, placeholder, hasBorder }: AdditionalInput) => (
       <input
         key={name}
         placeholder={placeholder}
