@@ -4,7 +4,7 @@ import { FIELD_KEYS, INPUTS_LABELS, TEST_IDS } from '../../constants';
 
 describe('TaskTimer Tests', () => {
   it('Render task title correctly', async () => {
-    render(<TaskTimer />);
+    render(<TaskTimer onTaskCreation={() => {}} />);
 
     const taskTitleInput = await screen.findByPlaceholderText(INPUTS_LABELS[FIELD_KEYS.TITLE]);
     const descriptionInput = await screen.findByPlaceholderText(
@@ -20,7 +20,7 @@ describe('TaskTimer Tests', () => {
   });
 
   it('Open and close additional info correctly', async () => {
-    render(<TaskTimer />);
+    render(<TaskTimer onTaskCreation={() => {}} />);
 
     const additionalInputsButton = await screen.findByTestId(TEST_IDS.ADDITIONAL_INFO_BUTTON);
     const additionalInputsContainer = await screen.findByTestId(TEST_IDS.ADDITIONAL_INFO_CONTAINER);
@@ -46,7 +46,7 @@ describe('TaskTimer Tests', () => {
   });
 
   it('Change inputs values correctly', async () => {
-    render(<TaskTimer />);
+    render(<TaskTimer onTaskCreation={() => {}} />);
 
     const taskTitleInput = await screen.findByPlaceholderText(INPUTS_LABELS[FIELD_KEYS.TITLE]);
     const descriptionInput = await screen.findByPlaceholderText(

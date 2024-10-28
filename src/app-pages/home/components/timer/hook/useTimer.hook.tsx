@@ -5,9 +5,10 @@ import { toast } from 'react-toastify';
 import { PlayIcon, StopIcon } from '@statics';
 import { getFormmatedTimesFromSeconds } from '@utils';
 import { createTaskAction } from '../actions/timer.action';
-import { FIELD_KEYS, INITIAL_TASK_STATE } from '../../../constants';
+import { FIELD_KEYS } from '../../../constants';
+import { UseTimer } from '../types';
 
-export function useTimer(setNewTask, task, setTask) {
+export function useTimer({ onTaskCreation, onTimerStart, resetTask, task }: UseTimer) {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
   let count: NodeJS.Timeout;
@@ -34,9 +35,7 @@ export function useTimer(setNewTask, task, setTask) {
   }
 
   function handleStart() {
-    const now = new Date();
-
-    setTask({ ...task, [FIELD_KEYS.INITIATED_AT]: now });
+    onTimerStart();
   }
 
   async function handleStop() {
@@ -46,8 +45,8 @@ export function useTimer(setNewTask, task, setTask) {
 
     if (actionResponse.error) toast.error(actionResponse.error);
     else {
-      setNewTask(actionResponse.newTask);
-      setTask(INITIAL_TASK_STATE);
+      onTaskCreation(actionResponse.newTask);
+      resetTask();
     }
   }
 

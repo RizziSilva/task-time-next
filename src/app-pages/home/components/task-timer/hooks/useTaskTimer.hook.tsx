@@ -1,8 +1,9 @@
 import { ChangeEvent, useState } from 'react';
 import { Task } from '@/types';
-import { INITIAL_TASK_STATE } from '../../../constants';
+import { FIELD_KEYS, INITIAL_TASK_STATE } from '../../../constants';
+import { UseTaskTimer } from '../types';
 
-export function useTimer() {
+export function useTaskTimer(): UseTaskTimer {
   const [task, setTask] = useState<Task>(INITIAL_TASK_STATE);
   const [isAdditionalInfoOpen, setIsAdditionalInfoOpen] = useState<boolean>(false);
 
@@ -16,11 +17,22 @@ export function useTimer() {
     setIsAdditionalInfoOpen(!isAdditionalInfoOpen);
   }
 
+  function onTimerStart() {
+    const now = new Date();
+
+    setTask({ ...task, [FIELD_KEYS.INITIATED_AT]: now });
+  }
+
+  function resetTask() {
+    setTask(INITIAL_TASK_STATE);
+  }
+
   return {
     handleInputChange,
     task,
     handleAdditionalInfoButtonClick,
     isAdditionalInfoOpen,
-    setTask,
+    onTimerStart,
+    resetTask,
   };
 }

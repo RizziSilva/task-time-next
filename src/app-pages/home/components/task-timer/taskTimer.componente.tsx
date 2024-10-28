@@ -4,17 +4,19 @@ import Image from 'next/image';
 import { ArrowDown } from '@statics';
 import { AdditionalInput } from '@types';
 import { ADDITIONAL_FIELDS, TEST_IDS, TITLE_FIELD } from '../../constants';
-import { useTimer } from './hooks/useTaskTimer.hook';
+import { useTaskTimer } from './hooks/useTaskTimer.hook';
 import { Timer } from '../timer/timer';
+import { TaskTimerProps } from './types';
 
-export function TaskTimer({ setNewTask }) {
+export function TaskTimer({ onTaskCreation }: TaskTimerProps) {
   const {
     handleInputChange,
     task,
-    setTask,
+    onTimerStart,
     handleAdditionalInfoButtonClick,
     isAdditionalInfoOpen,
-  } = useTimer();
+    resetTask,
+  } = useTaskTimer();
 
   function renderAdditionalFieldsButton() {
     return (
@@ -68,7 +70,12 @@ export function TaskTimer({ setNewTask }) {
       <div className='relative flex h-20 w-full items-center justify-start bg-background-light'>
         {renderTitleField()}
         {renderAdditionalFieldsButton()}
-        <Timer setNewTask={setNewTask} task={task} setTask={setTask} />
+        <Timer
+          onTaskCreation={onTaskCreation}
+          task={task}
+          onTimerStart={onTimerStart}
+          resetTask={resetTask}
+        />
         <div
           className={`${isAdditionalInfoOpen ? 'h-full' : 'h-0'} absolute top-[calc(theme(spacing.20)+2px)] flex  w-full flex-col transition-height duration-200 ease-in-out`}
           data-testid={TEST_IDS.ADDITIONAL_INFO_CONTAINER}

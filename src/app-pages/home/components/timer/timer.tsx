@@ -1,10 +1,16 @@
 'use client';
 
-import { useTimer } from './hook/useTimer.hook';
 import Image from 'next/image';
+import { useTimer } from './hook/useTimer.hook';
+import { TimerProps } from './types';
 
-export function Timer({ setNewTask, task, setTask }) {
-  const { getButtonIcon, handleTimerClick, getTimerToShow } = useTimer(setNewTask, task, setTask);
+export function Timer({ onTaskCreation, task, onTimerStart, resetTask }: TimerProps) {
+  const { getButtonIcon, handleTimerClick, getTimerToShow } = useTimer({
+    onTaskCreation,
+    task,
+    onTimerStart,
+    resetTask,
+  });
 
   function renderPlayStopButton() {
     return (
