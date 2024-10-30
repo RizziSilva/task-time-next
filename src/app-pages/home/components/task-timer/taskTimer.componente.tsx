@@ -5,7 +5,7 @@ import { ArrowDown } from '@statics';
 import { AdditionalInput } from '@types';
 import { ADDITIONAL_FIELDS, TEST_IDS, TITLE_FIELD } from '../../constants';
 import { useTaskTimer } from './hooks/useTaskTimer.hook';
-import { Timer } from '../timer/timer';
+import { Timer } from '../timer/timer.component';
 import { TaskTimerProps } from './types';
 
 export function TaskTimer({ onTaskCreation }: TaskTimerProps) {

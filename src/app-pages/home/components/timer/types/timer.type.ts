@@ -7,9 +7,16 @@ export interface TimerProps {
   resetTask: () => void;
 }
 
-export interface UseTimer {
+export interface UseTimerProps {
   onTaskCreation: (newTask: Task) => void;
   task: Task;
   onTimerStart: () => void;
   resetTask: () => void;
+}
+
+export interface UseTimer {
+  handleTimerClick: () => void;
+  getButtonIcon: any;
+  getTimerToShow: () => string;
+  timer: number;
 }

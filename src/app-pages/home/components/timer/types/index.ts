@@ -1,1 +1,1 @@
-export type { TimerProps, UseTimer } from './timer.type';
+export type { TimerProps, UseTimerProps, UseTimer } from './timer.type';

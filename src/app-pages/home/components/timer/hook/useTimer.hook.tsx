@@ -6,9 +6,14 @@ import { PlayIcon, StopIcon } from '@statics';
 import { getFormmatedTimesFromSeconds } from '@utils';
 import { createTaskAction } from '../actions/timer.action';
 import { FIELD_KEYS } from '../../../constants';
-import { UseTimer } from '../types';
+import { UseTimer, UseTimerProps } from '../types';
 
-export function useTimer({ onTaskCreation, onTimerStart, resetTask, task }: UseTimer) {
+export function useTimer({
+  onTaskCreation,
+  onTimerStart,
+  resetTask,
+  task,
+}: UseTimerProps): UseTimer {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
   let count: NodeJS.Timeout;

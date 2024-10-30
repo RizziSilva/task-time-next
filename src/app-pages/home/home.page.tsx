@@ -8,7 +8,7 @@ export function HomePage() {
 
   return (
     <div className='flex h-full w-full flex-col items-start justify-start'>
-      <TaskTimer onTaskCreation={onTaskCreation} />
+      <TaskTimer data-testid='test' onTaskCreation={onTaskCreation} />
     </div>
   );
 }
