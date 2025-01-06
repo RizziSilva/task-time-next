@@ -1,1 +1,8 @@
-export type { Task, AdditionalInput, TitleInput } from './task.types';
+export type {
+  Task,
+  AdditionalInput,
+  TitleInput,
+  CreateTaskRequest,
+  CreateTaskResponse,
+  TaskTime,
+} from './task.types';

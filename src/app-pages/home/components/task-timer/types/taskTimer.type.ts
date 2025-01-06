@@ -1,8 +1,8 @@
-import { Task } from '@/types';
+import { CreateTaskResponse, Task } from '@/types';
 import { ChangeEvent } from 'react';
 
 export interface TaskTimerProps {
-  onTaskCreation: (newTask: Task) => void;
+  onTaskCreation: (newTask: CreateTaskResponse) => void;
 }
 
 export interface UseTaskTimer {

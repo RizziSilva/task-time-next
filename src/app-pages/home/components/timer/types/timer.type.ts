@@ -1,14 +1,14 @@
-import { Task } from '@/types';
+import { CreateTaskResponse, Task } from '@/types';
 
 export interface TimerProps {
-  onTaskCreation: (newTask: Task) => void;
+  onTaskCreation: (newTask: CreateTaskResponse) => void;
   task: Task;
   onTimerStart: () => void;
   resetTask: () => void;
 }
 
 export interface UseTimerProps {
-  onTaskCreation: (newTask: Task) => void;
+  onTaskCreation: (newTask: CreateTaskResponse) => void;
   task: Task;
   onTimerStart: () => void;
   resetTask: () => void;

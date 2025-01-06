@@ -1,6 +1,6 @@
-import { Task } from '@/types';
+import { CreateTaskResponse } from '@/types';
 
 export interface UseHome {
-  newTask: Task | null;
-  onTaskCreation: (newTask: Task) => void;
+  newTask: CreateTaskResponse | null;
+  onTaskCreation: (newTask: CreateTaskResponse) => void;
 }

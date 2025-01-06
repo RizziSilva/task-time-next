@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Task } from '@types';
+import { CreateTaskResponse } from '@types';
 import { UseHome } from '../types';
 
 export function useHome(): UseHome {
-  const [newTask, setNewTask] = useState<Task | null>(null);
+  const [newTask, setNewTask] = useState<CreateTaskResponse | null>(null);
 
-  function onTaskCreation(createdTask: Task) {
+  function onTaskCreation(createdTask: CreateTaskResponse) {
     setNewTask(createdTask);
   }
 
