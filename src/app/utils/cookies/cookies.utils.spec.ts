@@ -53,13 +53,15 @@ describe('Cookies Tests', () => {
   });
 
   describe('setAccessAndRefreshToken tests', () => {
-    const tokens: Tokens = {
-      accessToken: 'accessToken',
-      refreshToken: 'refreshToken',
-    };
+    it('Set access and refresh token', () => {
+      const tokens: Tokens = {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken',
+      };
 
-    setAccessAndRefreshToken(tokens);
+      setAccessAndRefreshToken(tokens);
 
-    expect(cookies).toHaveBeenCalled();
+      expect(cookies).toHaveBeenCalled();
+    });
   });
 });

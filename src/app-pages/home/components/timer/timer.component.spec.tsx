@@ -24,7 +24,7 @@ describe('Timer component tests', () => {
     expect(timerButton).toBeInTheDocument();
   });
 
-  it('Renders timer correctly', async () => {
+  it('Renders timer text correctly', async () => {
     jest.useFakeTimers();
 
     const secondsToWait = 5;

@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import { PlayIcon, StopIcon } from '@statics';
-import { getFormmatedTimesFromSeconds } from '@utils';
-import { createTaskAction } from '../actions/timer.action';
-import { FIELD_KEYS } from '../../../constants';
+import { CreateTaskResponse, Task } from '@types';
+import { createTask } from '@services';
+import { getErrorMessage, getFormmatedTimesFromSeconds } from '@utils';
+import { CREATE_TASK_ERROR_MESAGE, FIELD_KEYS } from '../../../constants';
 import { UseTimer, UseTimerProps } from '../types';
-import { CreateTaskResponse } from '@/types';
 
 export function useTimer({
   onTaskCreation,
@@ -41,6 +42,19 @@ export function useTimer({
 
   function handleStart() {
     onTimerStart();
+  }
+
+  async function createTaskAction(task: Task): Promise<CreateTaskResponse | undefined> {
+    try {
+      const newTask: CreateTaskResponse = await createTask(task);
+
+      return newTask;
+    } catch (error) {
+      console.error(error);
+
+      const errorMessage = getErrorMessage(error, CREATE_TASK_ERROR_MESAGE);
+      toast.error(errorMessage);
+    }
   }
 
   async function handleStop() {
