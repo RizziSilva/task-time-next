@@ -5,7 +5,7 @@ export {
   COOKIE_OPTIONS,
   COOKIES_EXPIRATION_TIME,
 } from './cookies.constant';
-export { ROUTES } from './routes.constants';
+export { ROUTES } from './routes.constant';
 export {
   INVALID_EMAIL_ERROR_MESSAGE,
   REQUIRED_EMAIL_ERROR_MESSAGE,

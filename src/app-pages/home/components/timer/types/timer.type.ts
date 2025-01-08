@@ -15,7 +15,7 @@ export interface UseTimerProps {
 }
 
 export interface UseTimer {
-  handleTimerClick: () => void;
+  handleTimerClick: () => Promise<void>;
   getButtonIcon: any;
   getTimerToShow: () => string;
   timer: number;

@@ -10,7 +10,7 @@ jest.mock('@services');
 
 describe('useTimer hook tests', () => {
   describe('getTimerToShow tests', () => {
-    it('Retuns timer as string', () => {
+    it('Retuns timer as string', async () => {
       const resetTask = jest.fn();
       const onTaskCreation = jest.fn();
       const onTimerStart = jest.fn();
@@ -36,8 +36,8 @@ describe('useTimer hook tests', () => {
       jest.spyOn(utils, 'getFormmatedTimesFromSeconds').mockImplementationOnce(() => times);
       jest.spyOn(services, 'createTask').mockResolvedValueOnce({});
 
-      act(() => {
-        result.current.handleTimerClick();
+      await act(async () => {
+        await result.current.handleTimerClick();
       });
 
       act(() => {
@@ -46,8 +46,8 @@ describe('useTimer hook tests', () => {
 
       const resultTimer: string = result.current.getTimerToShow();
 
-      act(() => {
-        result.current.handleTimerClick();
+      await act(async () => {
+        await result.current.handleTimerClick();
       });
 
       const expected: string = `${times.hours}:${times.minutes}:${times.seconds}`;
@@ -76,9 +76,9 @@ describe('useTimer hook tests', () => {
         totalTimeSpent: 0,
         updatedAt: '',
       };
-      const resetTask = jest.fn();
-      const onTaskCreation = jest.fn();
-      const onTimerStart = jest.fn();
+      const resetTask = jest.fn(() => {});
+      const onTaskCreation = jest.fn(() => {});
+      const onTimerStart = jest.fn(() => {});
       const task: Task = {
         description: '',
         endedAt: undefined,
@@ -92,18 +92,125 @@ describe('useTimer hook tests', () => {
 
       jest.spyOn(services, 'createTask').mockResolvedValueOnce(expectedTask);
 
-      act(() => {
-        result.current.handleTimerClick();
+      await act(async () => {
+        await result.current.handleTimerClick();
       });
 
-      act(() => {
-        result.current.handleTimerClick();
+      await act(async () => {
+        await result.current.handleTimerClick();
       });
 
       expect(onTimerStart).toHaveBeenCalled();
-      expect(onTaskCreation).toHaveBeenCalled();
       expect(resetTask).toHaveBeenCalled();
+      expect(onTaskCreation).toHaveBeenCalled();
       expect(services.createTask).toHaveBeenCalled();
+    });
+
+    it('Stop timer and create task with error', async () => {
+      const times: TaskTime = {
+        createdAt: '',
+        endedAt: '',
+        initiatedAt: '',
+        timeSpent: 0,
+        updatedAt: '',
+      };
+      const expectedTask: CreateTaskResponse = {
+        createdAt: '',
+        description: '',
+        id: 1,
+        link: '',
+        times: [times],
+        title: '',
+        totalTimeSpent: 0,
+        updatedAt: '',
+      };
+      const resetTask = jest.fn(() => {});
+      const onTaskCreation = jest.fn(() => {});
+      const onTimerStart = jest.fn(() => {});
+      const task: Task = {
+        description: '',
+        endedAt: undefined,
+        initiatedAt: undefined,
+        link: '',
+        title: '',
+      };
+      const { result } = renderHook(() =>
+        useTimer({ task, resetTask, onTaskCreation, onTimerStart }),
+      );
+
+      jest.spyOn(services, 'createTask').mockRejectedValueOnce(expectedTask);
+
+      await act(async () => {
+        await result.current.handleTimerClick();
+      });
+
+      await act(async () => {
+        await result.current.handleTimerClick();
+      });
+
+      expect(services.createTask).toHaveBeenCalled();
+      expect(onTimerStart).toHaveBeenCalled();
+      expect(resetTask).not.toHaveBeenCalled();
+      expect(onTaskCreation).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('timer tests', () => {
+    it('Count seconds correctly', async () => {
+      jest.useFakeTimers();
+
+      const secondsToWait: number = 1;
+      const resetTask = jest.fn(() => {});
+      const onTaskCreation = jest.fn(() => {});
+      const onTimerStart = jest.fn(() => {});
+      const task: Task = {
+        description: '',
+        endedAt: undefined,
+        initiatedAt: undefined,
+        link: '',
+        title: '',
+      };
+      const { result } = renderHook(() =>
+        useTimer({ task, resetTask, onTaskCreation, onTimerStart }),
+      );
+
+      jest.spyOn(services, 'createTask').mockResolvedValueOnce({});
+
+      let timer: number = result.current.timer;
+      let expected: number = 0;
+      expect(timer).toBe(expected);
+
+      await act(async () => {
+        await result.current.handleTimerClick();
+      });
+
+      act(() => {
+        jest.advanceTimersByTime(secondsToWait * 1000);
+      });
+
+      timer = result.current.timer;
+      expected += secondsToWait;
+      expect(timer).toBe(expected);
+
+      act(() => {
+        jest.advanceTimersByTime(secondsToWait * 1000);
+      });
+
+      timer = result.current.timer;
+      expected += secondsToWait;
+      expect(timer).toBe(expected);
+
+      act(() => {
+        jest.advanceTimersByTime(secondsToWait * 1000);
+      });
+
+      timer = result.current.timer;
+      expected += secondsToWait;
+      expect(timer).toBe(expected);
+
+      await act(async () => {
+        await result.current.handleTimerClick();
+      });
     });
   });
 });

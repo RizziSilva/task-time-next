@@ -44,11 +44,12 @@ export function useTimer({
     onTimerStart();
   }
 
-  async function createTaskAction(task: Task): Promise<CreateTaskResponse | undefined> {
+  async function createTaskAction(task: Task): Promise<void> {
     try {
       const newTask: CreateTaskResponse = await createTask(task);
 
-      return newTask;
+      onTaskCreation(newTask);
+      resetTask();
     } catch (error) {
       console.error(error);
 
@@ -60,17 +61,12 @@ export function useTimer({
   async function handleStop() {
     const now = new Date();
     const body = { ...task, [FIELD_KEYS.ENDED_AT]: now };
-    const createdTask: CreateTaskResponse | undefined = await createTaskAction(body);
-
-    if (createdTask) {
-      onTaskCreation(createdTask);
-      resetTask();
-    }
+    await createTaskAction(body);
   }
 
-  function handleTimerClick() {
+  async function handleTimerClick() {
     if (!isPlaying) handleStart();
-    else handleStop();
+    else await handleStop();
 
     setIsPlaying(!isPlaying);
   }
