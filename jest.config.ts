@@ -9,7 +9,13 @@ const config: Config = {
   clearMocks: true,
   collectCoverage: true,
   coverageDirectory: 'coverage',
-  coveragePathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/services'],
+  coveragePathIgnorePatterns: [
+    '<rootDir>/node_modules/',
+    '<rootDir>/src/services',
+    '\\.constant\\.',
+    '\\index\\.',
+    '\\.server\\.',
+  ],
   coverageProvider: 'babel',
   testEnvironment: 'jsdom',
   moduleNameMapper: {

@@ -4,3 +4,12 @@ export type { FormError } from './form/error.types';
 export type { CreateUserFormState, CreateUserRequest } from './create-user';
 export type { User } from './user';
 export type { CookiesExpiration } from './cookies';
+export type {
+  Task,
+  AdditionalInput,
+  TitleInput,
+  CreateTaskRequest,
+  TaskTime,
+  CreateTaskResponse,
+} from './task';
+export type { Times } from './timer';

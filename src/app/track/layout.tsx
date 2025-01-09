@@ -6,9 +6,9 @@ export default function TrackLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <section className='small-screen:flex-col flex h-full w-full bg-background-base text-base'>
+    <section className='flex h-full w-full bg-background-base text-base small-screen:flex-col'>
       <Sidebar />
-      <div className='ml-sidebar-width'>{children}</div>
+      <div className='ml-sidebar-width w-full small-screen:ml-0'>{children}</div>
     </section>
   );
 }
