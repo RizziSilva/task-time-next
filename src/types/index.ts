@@ -13,3 +13,4 @@ export type {
   CreateTaskResponse,
 } from './task';
 export type { Times } from './timer';
+export type { GetPaginatedTaskTimesRequest, GetPaginatedTaskTime } from './task-time';
