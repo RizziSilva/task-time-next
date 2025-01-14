@@ -1,24 +1,43 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { GetPaginatedTaskTime, GetPaginatedTaskTimesRequest } from '@types';
+import { GetPaginatedTaskTime, GetPaginatedTaskTimesRequest, GroupedByDayTaskTimes } from '@types';
 import { getPaginatedTaskTimes } from '@services';
 import { getErrorMessage } from '@utils';
 import { GET_TASK_TIMES_ERROR_MESSAGE } from '../../../constants';
 
 export function UseTaskList() {
-  const [tasks, setTasks] = useState<Array<GetPaginatedTaskTime>>([]);
+  const [tasksByDay, setTasksByDay] = useState<Array<Array<GetPaginatedTaskTime>>>([]);
   const [page, setPage] = useState(1);
   const [isLastPage, setIsLastPage] = useState(false);
 
   useEffect(() => {
+    function groupTaskByDay(taskTimes: Array<GetPaginatedTaskTime>) {
+      const groupedTaskTimes = taskTimes.reduce(
+        (acc: Record<string, Array<GetPaginatedTaskTime>>, taskTime) => {
+          const datetime: Date = new Date(taskTime.endedAt);
+          const dateAsString: string = datetime.toLocaleDateString();
+          const alreadyHasKey: boolean = !!acc[dateAsString];
+
+          if (!alreadyHasKey) acc[dateAsString] = [];
+
+          acc[dateAsString].push(taskTime);
+
+          return acc;
+        },
+        {},
+      );
+      const groupedAsArray: Array<Array<GetPaginatedTaskTime>> = Object.values(groupedTaskTimes);
+
+      setTasksByDay(groupedAsArray);
+    }
+
     async function getTasks() {
       try {
         const params: GetPaginatedTaskTimesRequest = { page };
         const data = await getPaginatedTaskTimes(params);
-        debugger;
-        setTasks([...tasks, ...data.taskTimes]);
+
+        groupTaskByDay(data.taskTimes);
         setIsLastPage(data.isLastPage);
-        console.log('teste');
       } catch (error) {
         console.error(error);
 
@@ -35,5 +54,5 @@ export function UseTaskList() {
     setPage(page + 1);
   }
 
-  return { tasks, isLastPage, handleLoadMoreClick };
+  return { tasksByDay, isLastPage, handleLoadMoreClick };
 }

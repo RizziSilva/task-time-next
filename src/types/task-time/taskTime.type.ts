@@ -1,4 +1,4 @@
-export interface Task {
+export interface GetPaginatedTask {
   id: number;
   title: string;
   description: string;
@@ -10,5 +10,9 @@ export interface GetPaginatedTaskTime {
   endedAt: string;
   totalTimeSpent: number;
   id: number;
-  task: Task;
+  task: GetPaginatedTask;
+}
+
+export interface GroupedByDayTaskTimes {
+  [key: string]: GetPaginatedTaskTime;
 }
