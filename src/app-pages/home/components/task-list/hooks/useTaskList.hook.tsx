@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { GetPaginatedTaskTime, GetPaginatedTaskTimesRequest, GroupedByDayTaskTimes } from '@types';
+import { GetPaginatedTaskTime, GetPaginatedTaskTimesRequest, Times } from '@types';
 import { getPaginatedTaskTimes } from '@services';
-import { getErrorMessage } from '@utils';
+import { getErrorMessage, getFormmatedTimesFromSeconds } from '@utils';
 import { GET_TASK_TIMES_ERROR_MESSAGE } from '../../../constants';
 
 export function UseTaskList() {
@@ -54,5 +54,42 @@ export function UseTaskList() {
     setPage(page + 1);
   }
 
-  return { tasksByDay, isLastPage, handleLoadMoreClick };
+  function getFormattedDayString(day: string): string {
+    const date: Date = new Date(day);
+    const dayString: string = date.toLocaleDateString('pt-BR', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short',
+    });
+    const formattedDayString: string = dayString.replaceAll('.', '');
+
+    return formattedDayString;
+  }
+
+  function getStringTimeFromDateString(stringDate: string): string {
+    const date: Date = new Date(stringDate);
+    const hours = `${date.getHours().toString().padStart(2, '0')}`;
+    const minutes = `${date.getMinutes().toString().padStart(2, '0')}`;
+
+    return `${hours}:${minutes}`;
+  }
+
+  function getTotalTimeSpentFromDay(dayTaskTimes: Array<GetPaginatedTaskTime>): string {
+    const totalTimeSpentInSeconds: number = dayTaskTimes.reduce(
+      (acc: number, taskTime: GetPaginatedTaskTime) => acc + taskTime.totalTimeSpent,
+      0,
+    );
+    const totalTimeSpentInValues: Times = getFormmatedTimesFromSeconds(totalTimeSpentInSeconds);
+
+    return `${totalTimeSpentInValues.hours}:${totalTimeSpentInValues.minutes}:${totalTimeSpentInValues.seconds}`;
+  }
+
+  return {
+    tasksByDay,
+    isLastPage,
+    handleLoadMoreClick,
+    getFormattedDayString,
+    getStringTimeFromDateString,
+    getTotalTimeSpentFromDay,
+  };
 }
