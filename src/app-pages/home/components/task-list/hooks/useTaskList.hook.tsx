@@ -5,10 +5,10 @@ import { getPaginatedTaskTimes } from '@services';
 import { getErrorMessage, getFormmatedTimesFromSeconds } from '@utils';
 import { GET_TASK_TIMES_ERROR_MESSAGE } from '../../../constants';
 
-export function UseTaskList() {
+export function useTaskList() {
   const [tasksByDay, setTasksByDay] = useState<Array<Array<GetPaginatedTaskTime>>>([]);
-  const [page, setPage] = useState(1);
-  const [isLastPage, setIsLastPage] = useState(false);
+  const [page, setPage] = useState<number>(1);
+  const [isLastPage, setIsLastPage] = useState<boolean>(false);
 
   useEffect(() => {
     function groupTaskByDay(taskTimes: Array<GetPaginatedTaskTime>) {
@@ -68,8 +68,8 @@ export function UseTaskList() {
 
   function getStringTimeFromDateString(stringDate: string): string {
     const date: Date = new Date(stringDate);
-    const hours = `${date.getHours().toString().padStart(2, '0')}`;
-    const minutes = `${date.getMinutes().toString().padStart(2, '0')}`;
+    const hours: string = `${date.getHours().toString().padStart(2, '0')}`;
+    const minutes: string = `${date.getMinutes().toString().padStart(2, '0')}`;
 
     return `${hours}:${minutes}`;
   }

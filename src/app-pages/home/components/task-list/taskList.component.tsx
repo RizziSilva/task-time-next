@@ -1,5 +1,6 @@
 import { GetPaginatedTaskTime } from '@/types';
-import { UseTaskList } from './hooks/useTaskList.hook';
+import { useTaskList } from './hooks/useTaskList.hook';
+import { TEST_IDS } from '../../constants';
 
 export function TaskList({}) {
   const {
@@ -7,7 +8,7 @@ export function TaskList({}) {
     getFormattedDayString,
     getStringTimeFromDateString,
     getTotalTimeSpentFromDay,
-  } = UseTaskList();
+  } = useTaskList();
 
   function renderTasks(dayTasks: Array<GetPaginatedTaskTime>) {
     return dayTasks.map(({ id, task, initiatedAt, endedAt }) => {
@@ -17,6 +18,7 @@ export function TaskList({}) {
       return (
         <div
           key={id}
+          data-testid={TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER}
           className='flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color pl-50px pr-20'
         >
           <span className='flex h-full w-fit items-center text-sm font-semibold text-snuff-font-color'>
@@ -43,7 +45,8 @@ export function TaskList({}) {
     return (
       <div
         key={id}
-        className=' mb-8 flex w-full flex-col items-start justify-start bg-background-light '
+        data-testid={TEST_IDS.TASK_LIST_DAY_CONTAINER}
+        className='mb-8 flex w-full flex-col items-start justify-start bg-background-light '
       >
         <div className='flex h-50px w-full items-center justify-between pl-50px pr-20'>
           <span className='flex h-full w-fit items-center text-sm font-semibold capitalize text-snuff-font-color'>
@@ -59,11 +62,11 @@ export function TaskList({}) {
   }
 
   function renderDays() {
-    return tasksByDay.map((dayTasks) => renderDay(dayTasks));
+    return tasksByDay.map((dayTasks: Array<GetPaginatedTaskTime>) => renderDay(dayTasks));
   }
 
   return (
-    <div className='scrollbar scrollbar-w-1 scrollbar-thumb-rounded-xl scrollbar-thumb-scrollbar-color mt-16 flex w-full flex-col justify-start overflow-y-auto'>
+    <div className='mt-16 flex w-full flex-col justify-start overflow-y-auto scrollbar scrollbar-thumb-scrollbar-color scrollbar-thumb-rounded-xl scrollbar-w-1'>
       {renderDays()}
     </div>
   );
