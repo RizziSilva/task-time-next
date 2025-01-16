@@ -91,5 +91,6 @@ export function useTaskList() {
     getFormattedDayString,
     getStringTimeFromDateString,
     getTotalTimeSpentFromDay,
+    page,
   };
 }

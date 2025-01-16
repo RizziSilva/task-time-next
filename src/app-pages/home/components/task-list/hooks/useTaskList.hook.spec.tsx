@@ -1,6 +1,9 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import * as services from '@services';
+import { GetPaginatedTask, GetPaginatedTaskTime } from '@types';
 import { useTaskList } from './useTaskList.hook';
-import { GetPaginatedTask, GetPaginatedTaskTime } from '@/types';
+
+jest.mock('@services');
 
 describe('useTaskList hook tests', () => {
   beforeAll(() => {
@@ -95,6 +98,64 @@ describe('useTaskList hook tests', () => {
       const stringResult = result.current.getFormattedDayString(mockDate);
 
       expect(stringResult).toBe('qui, 16 de jan');
+    });
+  });
+
+  describe('handleLoadMoreClick tests', () => {
+    it('Change page when clicked', () => {
+      const { result } = renderHook(() => useTaskList());
+      const initialPage: number = result.current.page;
+
+      expect(initialPage).toBe(1);
+
+      act(() => {
+        result.current.handleLoadMoreClick();
+      });
+
+      expect(result.current.page).toBe(2);
+    });
+  });
+
+  describe('useEffect tests', () => {
+    it('Group tasks by day with success', async () => {
+      const endedAtTaskOne: string = '2025-01-16T10:00:00';
+      const endedAtTaskTwo: string = '2025-01-15T10:00:00';
+      const task: GetPaginatedTask = {
+        description: '',
+        id: 1,
+        link: '',
+        title: '',
+      };
+      const taskTimeOne: GetPaginatedTaskTime = {
+        endedAt: endedAtTaskOne,
+        id: 1,
+        initiatedAt: '',
+        task: task,
+        totalTimeSpent: 60,
+      };
+      const taskTimeTwo: GetPaginatedTaskTime = {
+        endedAt: endedAtTaskTwo,
+        id: 1,
+        initiatedAt: '',
+        task: task,
+        totalTimeSpent: 60,
+      };
+
+      const taskTimes: Array<GetPaginatedTaskTime> = [taskTimeOne, taskTimeTwo];
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: taskTimes,
+        isLastPage: true,
+      });
+
+      const { result } = renderHook(() => useTaskList());
+
+      await waitFor(() => {
+        const resultTasks: Array<Array<GetPaginatedTaskTime>> = result.current.tasksByDay;
+
+        expect(resultTasks[0][0].endedAt).toBe(endedAtTaskOne);
+        expect(resultTasks[1][0].endedAt).toBe(endedAtTaskTwo);
+      });
     });
   });
 });
