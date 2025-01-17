@@ -1,6 +1,6 @@
 'use client';
 
-import { TaskTimer } from './components';
+import { TaskList, TaskTimer } from './components';
 import { useHome } from './hooks/useHome.hook';
 
 export function HomePage() {
@@ -8,7 +8,8 @@ export function HomePage() {
 
   return (
     <div className='flex h-full w-full flex-col items-start justify-start'>
-      <TaskTimer data-testid='test' onTaskCreation={onTaskCreation} />
+      <TaskTimer onTaskCreation={onTaskCreation} />
+      <TaskList />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import TailwindScrollbar from 'tailwind-scrollbar';
 
 const config: Config = {
   content: [
@@ -31,6 +32,9 @@ const config: Config = {
         'red-base': '#D65C56',
         'red-darken': '#BC4B45',
         'error-red': '#E32817',
+        'snuff-font-color': '#dbcae2',
+        'task-border-color': '#30163c',
+        'scrollbar-color': '#a04a97',
       },
       spacing: {
         'create-user-page-height': '571px',
@@ -38,6 +42,7 @@ const config: Config = {
         'sidebar-width': '230px',
         'sidebar-padding': '20px',
         '10px': '10px',
+        '50px': '50px',
       },
       lineHeight: {
         full: '100%',
@@ -47,6 +52,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [TailwindScrollbar({ nocompatible: true })],
 };
 export default config;
