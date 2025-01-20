@@ -17,12 +17,12 @@ export function TaskList({}) {
   function renderTaskNumberOfEntries(numberOfEntries: number, taskId: number) {
     if (numberOfEntries <= 1) return null;
 
-    const idOpenedTaskTimeEntries: boolean = getIsOpenedTaskEntries(taskId);
+    const isOpened: boolean = getIsOpenedTaskEntries(taskId);
 
     return (
       <button
         onClick={() => handleClickShowTaskEntries(taskId)}
-        className={`${idOpenedTaskTimeEntries ? 'bg-[#2c1937]' : ''} mr-[10px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border-[1px] border-[#7A5A87] hover:bg-[#2c1937]`}
+        className={`${isOpened ? 'bg-[#2c1937]' : ''} mr-[10px] flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg border-[1px] border-[#7A5A87] hover:bg-[#2c1937]`}
       >
         <span className='text-sm text-white'>{numberOfEntries}</span>
       </button>
@@ -73,13 +73,14 @@ export function TaskList({}) {
       const initiatedAtString: string = getStringTimeFromDateString(lastTimeEntry.initiatedAt);
       const endedAtString: string = getStringTimeFromDateString(firstTimeEntry.endedAt);
       const totalTimeSpentInTask: string = getTotalTimeSpentFromTask(tasks);
+      const isOpened: boolean = getIsOpenedTaskEntries(task.id);
 
       return (
         <>
           <div
             key={id}
             data-testid={TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER}
-            className='hover:bg-task-hover flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color pl-50px pr-20'
+            className={`${isOpened ? 'bg-task-hover' : ''} hover:bg-task-hover flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color pl-50px pr-20`}
           >
             <div className='flex w-fit items-center justify-start'>
               {renderTaskNumberOfEntries(tasks.length, task.id)}
