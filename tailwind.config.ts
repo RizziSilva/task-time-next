@@ -35,6 +35,7 @@ const config: Config = {
         'snuff-font-color': '#dbcae2',
         'task-border-color': '#30163c',
         'scrollbar-color': '#a04a97',
+        'task-hover': '#2e183c',
       },
       spacing: {
         'create-user-page-height': '571px',
@@ -49,6 +50,15 @@ const config: Config = {
       },
       transitionProperty: {
         height: 'height',
+      },
+      animation: {
+        'task-entry': 'task-entry 0.3s ease',
+      },
+      keyframes: {
+        'task-entry': {
+          '0%': { opacity: '0.5' },
+          '100%': { opacity: '1' },
+        },
       },
     },
   },

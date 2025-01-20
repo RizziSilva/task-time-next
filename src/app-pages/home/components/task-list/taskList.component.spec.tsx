@@ -34,7 +34,7 @@ describe('TaskList component tests', () => {
       handleLoadMoreClick,
       getFormattedDayString,
       getStringTimeFromDateString,
-      getTotalTimeSpentFromDay,
+      getTotalTimeSpentFromTimeEntries: getTotalTimeSpentFromDay,
     });
 
     render(<TaskList />);
@@ -73,7 +73,7 @@ describe('TaskList component tests', () => {
       handleLoadMoreClick,
       getFormattedDayString,
       getStringTimeFromDateString,
-      getTotalTimeSpentFromDay,
+      getTotalTimeSpentFromTimeEntries: getTotalTimeSpentFromDay,
     });
 
     render(<TaskList />);
@@ -112,7 +112,7 @@ describe('TaskList component tests', () => {
       handleLoadMoreClick,
       getFormattedDayString,
       getStringTimeFromDateString,
-      getTotalTimeSpentFromDay,
+      getTotalTimeSpentFromTimeEntries: getTotalTimeSpentFromDay,
     });
 
     render(<TaskList />);

@@ -32,7 +32,7 @@ describe('useTaskList hook tests', () => {
       const dayTask: Array<GetPaginatedTaskTime> = [taskTime];
       const { result } = renderHook(() => useTaskList());
 
-      const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
+      const totalTimeSpent = result.current.getTotalTimeSpentFromTimeEntries(dayTask);
 
       expect(totalTimeSpent).toBe('00:01:00');
     });
@@ -54,7 +54,7 @@ describe('useTaskList hook tests', () => {
       const dayTask: Array<GetPaginatedTaskTime> = [taskTime, taskTime, taskTime];
       const { result } = renderHook(() => useTaskList());
 
-      const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
+      const totalTimeSpent = result.current.getTotalTimeSpentFromTimeEntries(dayTask);
 
       expect(totalTimeSpent).toBe('00:03:00');
     });
