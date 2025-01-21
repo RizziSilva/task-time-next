@@ -15,7 +15,7 @@ describe('useTaskList hook tests', () => {
   });
 
   describe('getTotalTimeSpentFromDay tests', () => {
-    it('Return total time spent from a day based on task times entries with one task', () => {
+    it('Return total time spent from a day based on task times entries with one day', () => {
       const task: GetPaginatedTask = {
         description: '',
         id: 1,
@@ -29,15 +29,15 @@ describe('useTaskList hook tests', () => {
         task: task,
         totalTimeSpent: 60,
       };
-      const dayTask: Array<GetPaginatedTaskTime> = [taskTime];
+      const dayTask: Array<Array<GetPaginatedTaskTime>> = [[taskTime]];
       const { result } = renderHook(() => useTaskList());
 
-      const totalTimeSpent = result.current.getTotalTimeSpentFromTimeEntries(dayTask);
+      const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
 
       expect(totalTimeSpent).toBe('00:01:00');
     });
 
-    it('Return total time spent from a day based on task times entries with three tasks', () => {
+    it('Return total time spent from a day based on task times entries with two days', () => {
       const task: GetPaginatedTask = {
         description: '',
         id: 1,
@@ -51,10 +51,10 @@ describe('useTaskList hook tests', () => {
         task: task,
         totalTimeSpent: 60,
       };
-      const dayTask: Array<GetPaginatedTaskTime> = [taskTime, taskTime, taskTime];
+      const dayTask: Array<Array<GetPaginatedTaskTime>> = [[taskTime, taskTime], [taskTime]];
       const { result } = renderHook(() => useTaskList());
 
-      const totalTimeSpent = result.current.getTotalTimeSpentFromTimeEntries(dayTask);
+      const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
 
       expect(totalTimeSpent).toBe('00:03:00');
     });
@@ -151,10 +151,10 @@ describe('useTaskList hook tests', () => {
       const { result } = renderHook(() => useTaskList());
 
       await waitFor(() => {
-        const resultTasks: Array<Array<GetPaginatedTaskTime>> = result.current.tasksByDay;
+        const resultTasks: Array<Array<Array<GetPaginatedTaskTime>>> = result.current.tasksByDay;
 
-        expect(resultTasks[0][0].endedAt).toBe(endedAtTaskOne);
-        expect(resultTasks[1][0].endedAt).toBe(endedAtTaskTwo);
+        expect(resultTasks[0][0][0].endedAt).toBe(endedAtTaskOne);
+        expect(resultTasks[1][0][0].endedAt).toBe(endedAtTaskTwo);
       });
     });
   });

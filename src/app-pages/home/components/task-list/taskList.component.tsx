@@ -45,7 +45,7 @@ export function TaskList({}) {
         <div
           key={id}
           data-testid={TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER}
-          className='hover:bg-task-hover flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color bg-[#1c0f24] pl-[88px]  pr-20'
+          className='flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color bg-[#1c0f24] pl-[88px] pr-20  hover:bg-task-hover'
         >
           <div className='flex w-fit animate-task-entry items-center justify-start'>
             <span className='flex h-full w-fit items-center text-sm font-semibold text-snuff-font-color'>
@@ -80,7 +80,7 @@ export function TaskList({}) {
           <div
             key={id}
             data-testid={TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER}
-            className={`${isOpened ? 'bg-task-hover' : ''} hover:bg-task-hover flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color pl-50px pr-20`}
+            className={`${isOpened ? 'bg-task-hover' : ''} flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color pl-50px pr-20 hover:bg-task-hover`}
           >
             <div className='flex w-fit items-center justify-start'>
               {renderTaskNumberOfEntries(tasks.length, task.id)}
