@@ -63,6 +63,7 @@ export function useTaskList() {
   }
 
   function handleClickShowTaskEntries(taskId: number) {
+    console.log('teste click');
     const currentOpenedTasks: Array<number> = [...taskToShowTimes];
     const indexOfClickedTask: number = currentOpenedTasks.indexOf(taskId);
     const isTaskAlreadyOpened: boolean = indexOfClickedTask !== -1;
