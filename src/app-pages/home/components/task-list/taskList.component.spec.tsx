@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, findAllByTestId, fireEvent, render, screen } from '@testing-library/react';
 import { GetPaginatedTask, GetPaginatedTaskTime } from '@types';
 import * as services from '@services';
 import { TaskList } from './taskList.component';
@@ -11,30 +11,24 @@ describe('TaskList component tests', () => {
     it('Render a day of tasks correctly', async () => {
       const taskTimeSpentFormatted: string = '00:01:00';
       const taskTimeSpent: number = 60;
-      const task: GetPaginatedTask = {
-        description: '',
-        id: 1,
-        link: '',
-        title: 'Some title',
-      };
-      const taskTime: GetPaginatedTaskTime = {
-        endedAt: '2025-01-07T07:21:00.000Z',
-        id: 1,
-        initiatedAt: '2025-01-07T07:20:00.000Z',
-        task: task,
-        totalTimeSpent: taskTimeSpent,
-      };
+      const taskTime = getTaskTimeToMock();
+
+      taskTime.totalTimeSpent = taskTimeSpent;
+      taskTime.endedAt = '2025-01-07T07:21:00.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:00.000Z';
+      taskTime.task.title = 'Some title';
+
       const tasks: Array<GetPaginatedTaskTime> = [taskTime];
 
       jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
         taskTimes: tasks,
-        isLastPage: false,
+        isLastPage: true,
       });
 
       render(<TaskList />);
 
       const taskDayContainer = await screen.findAllByTestId(TEST_IDS.TASK_LIST_DAY_CONTAINER);
-      const taskTitleSpan = await screen.findByText(task.title);
+      const taskTitleSpan = await screen.findByText(taskTime.task.title);
       const taskTimeSpentSpan = await screen.findAllByText(taskTimeSpentFormatted);
 
       expect(taskDayContainer).toHaveLength(1);
@@ -42,211 +36,224 @@ describe('TaskList component tests', () => {
       expect(taskTitleSpan).toBeInTheDocument();
     });
 
-    // it('Render three days of tasks correctly', async () => {
-    //   const task: GetPaginatedTask = {
-    //     description: '',
-    //     id: 1,
-    //     link: '',
-    //     title: 'Title',
-    //   };
-    //   const taskTime: GetPaginatedTaskTime = {
-    //     endedAt: '',
-    //     id: 1,
-    //     initiatedAt: '',
-    //     task: task,
-    //     totalTimeSpent: 100,
-    //   };
-    //   const tasksByDay: Array<Array<Array<GetPaginatedTaskTime>>> = [
-    //     [[taskTime]],
-    //     [[taskTime]],
-    //     [[taskTime]],
-    //   ];
-    //   const getFormattedDayString = jest.fn();
-    //   const getTotalTimeSpentFromDay = jest.fn();
+    it('Render three days of tasks correctly', async () => {
+      const taskTime = getTaskTimeToMock();
+      const taskTimeTwo = getTaskTimeToMock();
+      const taskTimeThree = getTaskTimeToMock();
 
-    //   jest.spyOn(useTaskListMock, 'useTaskList').mockReturnValue({
-    //     ...defaultMock,
-    //     tasksByDay,
-    //     getFormattedDayString,
-    //     getTotalTimeSpentFromDay,
-    //   });
+      taskTime.totalTimeSpent = 100;
+      taskTime.endedAt = '2025-01-07T07:21:00.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:00.000Z';
+      taskTime.task.title = 'Task title one';
 
-    //   render(<TaskList />);
+      taskTimeTwo.totalTimeSpent = 90;
+      taskTimeTwo.endedAt = '2025-01-09T07:21:00.000Z';
+      taskTimeTwo.initiatedAt = '2025-01-09T07:20:00.000Z';
+      taskTimeTwo.task.title = 'Task title two';
+      taskTimeTwo.task.id = 2;
 
-    //   const taskDayContainer = await screen.findAllByTestId(TEST_IDS.TASK_LIST_DAY_CONTAINER);
+      taskTimeThree.totalTimeSpent = 80;
+      taskTimeThree.endedAt = '2025-01-10T07:21:00.000Z';
+      taskTimeThree.initiatedAt = '2025-01-10T07:20:00.000Z';
+      taskTimeThree.task.title = 'Task title three';
+      taskTimeThree.task.id = 3;
 
-    //   expect(taskDayContainer).toHaveLength(tasksByDay.length);
-    //   expect(getFormattedDayString).toHaveBeenCalledTimes(3);
-    //   expect(getTotalTimeSpentFromDay).toHaveBeenCalledTimes(3);
-    // });
+      const tasksByDay: Array<GetPaginatedTaskTime> = [taskTime, taskTimeTwo, taskTimeThree];
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: tasksByDay,
+        isLastPage: true,
+      });
+
+      render(<TaskList />);
+
+      const taskDayContainer = await screen.findAllByTestId(TEST_IDS.TASK_LIST_DAY_CONTAINER);
+      const titleOne = await screen.findByText(taskTime.task.title);
+      const titleTwo = await screen.findByText(taskTimeTwo.task.title);
+      const titleThree = await screen.findByText(taskTimeThree.task.title);
+
+      expect(taskDayContainer).toHaveLength(3);
+      expect(titleOne).toBeInTheDocument();
+      expect(titleTwo).toBeInTheDocument();
+      expect(titleThree).toBeInTheDocument();
+    });
   });
 
-  // describe('renderTasks tests', () => {
-  //   it('Render task from a day correctly', async () => {
-  //     const task: GetPaginatedTask = {
-  //       description: '',
-  //       id: 1,
-  //       link: '',
-  //       title: 'Some title',
-  //     };
-  //     const taskTime: GetPaginatedTaskTime = {
-  //       endedAt: '2025-01-07T07:20:27.000Z',
-  //       id: 1,
-  //       initiatedAt: '2025-01-07T07:20:25.000Z',
-  //       task: task,
-  //       totalTimeSpent: 60,
-  //     };
-  //     const tasksByDay: Array<Array<Array<GetPaginatedTaskTime>>> = [
-  //       [[taskTime, taskTime, taskTime]],
-  //     ];
+  describe('renderTasks tests', () => {
+    it('Render one task with three entries from a day correctly', async () => {
+      const taskTime = getTaskTimeToMock();
 
-  //     const getStringTimeFromDateString = jest.fn();
-  //     const getTotalTimeSpentFromTask = jest.fn();
-  //     const getIsOpenedTaskEntries = jest.fn();
+      taskTime.endedAt = '2025-01-07T07:20:27.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:25.000Z';
+      taskTime.task.title = 'Some title';
 
-  //     jest.spyOn(useTaskListMock, 'useTaskList').mockReturnValue({
-  //       ...defaultMock,
-  //       tasksByDay,
-  //       getStringTimeFromDateString,
-  //       getTotalTimeSpentFromTask,
-  //       getIsOpenedTaskEntries,
-  //     });
+      const tasksByDay: Array<GetPaginatedTaskTime> = [taskTime, taskTime, taskTime];
 
-  //     render(<TaskList />);
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: tasksByDay,
+        isLastPage: true,
+      });
 
-  //     const taskTimeEntryContainer = await screen.findAllByTestId(
-  //       TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
-  //     );
-  //     const taskTitleSpan = await screen.findAllByText(task.title);
-  //     const taskNumberOfEntriesSpan = await screen.findByText(tasksByDay[0][0].length);
+      render(<TaskList />);
 
-  //     expect(taskTimeEntryContainer).toHaveLength(tasksByDay[0].length);
-  //     expect(taskTitleSpan).toHaveLength(1);
-  //     expect(taskNumberOfEntriesSpan).toHaveTextContent(`${tasksByDay[0][0].length}`);
-  //     expect(getStringTimeFromDateString).toHaveBeenCalledTimes(2);
-  //     expect(getStringTimeFromDateString).toHaveBeenCalledWith(taskTime.endedAt);
-  //     expect(getStringTimeFromDateString).toHaveBeenCalledWith(taskTime.initiatedAt);
-  //     expect(getTotalTimeSpentFromTask).toHaveBeenCalled();
-  //     expect(getIsOpenedTaskEntries).toHaveBeenCalledWith(task.id);
-  //   });
+      const taskTimeEntryContainer = await screen.findAllByTestId(
+        TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
+      );
+      const taskTitleSpan = await screen.findAllByText(taskTime.task.title);
+      const taskNumberOfEntriesSpan = await screen.findByText(tasksByDay.length);
 
-  //   it('Render two task from a day correctly', async () => {
-  //     const task: GetPaginatedTask = {
-  //       description: '',
-  //       id: 1,
-  //       link: '',
-  //       title: 'Some title',
-  //     };
-  //     const taskTime: GetPaginatedTaskTime = {
-  //       endedAt: '2025-01-07T07:20:27.000Z',
-  //       id: 1,
-  //       initiatedAt: '2025-01-07T07:20:25.000Z',
-  //       task: task,
-  //       totalTimeSpent: 60,
-  //     };
-  //     const taskTwo: GetPaginatedTask = {
-  //       description: '',
-  //       id: 2,
-  //       link: '',
-  //       title: 'Some title two',
-  //     };
-  //     const taskTimeTwo: GetPaginatedTaskTime = {
-  //       endedAt: '2025-01-07T07:20:27.000Z',
-  //       id: 2,
-  //       initiatedAt: '2025-01-07T07:20:25.000Z',
-  //       task: taskTwo,
-  //       totalTimeSpent: 60,
-  //     };
-  //     const tasksByDay: Array<Array<Array<GetPaginatedTaskTime>>> = [
-  //       [[taskTime, taskTime], [taskTimeTwo]],
-  //     ];
+      expect(taskTimeEntryContainer).toHaveLength(1);
+      expect(taskTitleSpan).toHaveLength(1);
+      expect(taskNumberOfEntriesSpan).toHaveTextContent('3');
+    });
 
-  //     const getStringTimeFromDateString = jest.fn();
-  //     const getTotalTimeSpentFromTask = jest.fn();
-  //     const getIsOpenedTaskEntries = jest.fn();
+    it('Render two task one with two entries and one with only one entry from a day correctly', async () => {
+      const taskTime = getTaskTimeToMock();
 
-  //     jest.spyOn(useTaskListMock, 'useTaskList').mockReturnValue({
-  //       ...defaultMock,
-  //       tasksByDay,
-  //       getStringTimeFromDateString,
-  //       getTotalTimeSpentFromTask,
-  //       getIsOpenedTaskEntries,
-  //     });
+      taskTime.endedAt = '2025-01-07T07:20:27.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:25.000Z';
+      taskTime.task.title = 'Some title';
 
-  //     render(<TaskList />);
+      const taskTimeTwo = getTaskTimeToMock();
 
-  //     const taskTimeEntryContainer = await screen.findAllByTestId(
-  //       TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
-  //     );
-  //     const taskTitleSpan = await screen.findAllByText(task.title);
-  //     const taskTwoTitleSpan = await screen.findAllByText(taskTwo.title);
+      taskTimeTwo.endedAt = '2025-01-07T09:20:27.000Z';
+      taskTimeTwo.initiatedAt = '2025-01-07T09:20:25.000Z';
+      taskTimeTwo.task.title = 'Some title two';
+      taskTimeTwo.id = 2;
+      taskTimeTwo.task.id = 2;
 
-  //     expect(taskTimeEntryContainer).toHaveLength(tasksByDay[0].length);
-  //     expect(taskTitleSpan).toHaveLength(1);
-  //     expect(taskTwoTitleSpan).toHaveLength(1);
-  //     expect(getStringTimeFromDateString).toHaveBeenCalledTimes(4);
-  //     expect(getTotalTimeSpentFromTask).toHaveBeenCalledTimes(2);
-  //     expect(getIsOpenedTaskEntries).toHaveBeenCalledWith(task.id);
-  //     expect(getIsOpenedTaskEntries).toHaveBeenCalledWith(taskTwo.id);
-  //   });
-  // });
+      const tasksByDay: Array<GetPaginatedTaskTime> = [taskTime, taskTime, taskTimeTwo];
 
-  // describe('renderTaskTimeEntries tests', () => {
-  //   it('Render a task with 2 entries', async () => {
-  //     const task: GetPaginatedTask = {
-  //       description: '',
-  //       id: 1,
-  //       link: '',
-  //       title: 'Some title',
-  //     };
-  //     const taskTime: GetPaginatedTaskTime = {
-  //       endedAt: '2025-01-07T07:20:27.000Z',
-  //       id: 1,
-  //       initiatedAt: '2025-01-07T07:20:25.000Z',
-  //       task: task,
-  //       totalTimeSpent: 60,
-  //     };
-  //     const taskTimeTwo: GetPaginatedTaskTime = {
-  //       endedAt: '2025-01-07T07:20:27.000Z',
-  //       id: 2,
-  //       initiatedAt: '2025-01-07T07:20:25.000Z',
-  //       task: task,
-  //       totalTimeSpent: 60,
-  //     };
-  //     const tasksByDay: Array<Array<Array<GetPaginatedTaskTime>>> = [[[taskTime, taskTimeTwo]]];
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: tasksByDay,
+        isLastPage: true,
+      });
 
-  //     const getStringTimeFromDateString = jest.fn();
-  //     const getTotalTimeSpentFromTaskEntry = jest.fn();
+      render(<TaskList />);
 
-  //     jest.spyOn(useTaskListMock, 'useTaskList').mockReturnValue({
-  //       ...defaultMock,
-  //       tasksByDay,
-  //       getStringTimeFromDateString,
-  //       getTotalTimeSpentFromTaskEntry,
-  //     });
+      const taskTimeEntryContainer = await screen.findAllByTestId(
+        TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
+      );
+      const taskTitleSpan = await screen.findAllByText(taskTime.task.title);
+      const taskTwoTitleSpan = await screen.findAllByText(taskTimeTwo.task.title);
 
-  //     render(<TaskList />);
+      expect(taskTimeEntryContainer).toHaveLength(2);
+      expect(taskTitleSpan).toHaveLength(1);
+      expect(taskTwoTitleSpan).toHaveLength(1);
+    });
+  });
 
-  //     const taskEntriesButton = await screen.findByRole('button', { name: '2' });
-  //     const taskTimeEntryContainersBeforeClick = screen.queryAllByTestId(
-  //       TEST_IDS.TASK_ENTRIES_CONTAINER,
-  //     );
+  describe('renderTaskTimeEntries tests', () => {
+    it('Render a task from a day with two entries correctly', async () => {
+      const taskTime = getTaskTimeToMock();
 
-  //     expect(taskTimeEntryContainersBeforeClick).toHaveLength(0);
-  //     expect(getStringTimeFromDateString).toHaveBeenCalledTimes(2);
-  //     expect(getTotalTimeSpentFromTaskEntry).not.toHaveBeenCalled();
+      taskTime.endedAt = '2025-01-07T07:20:27.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:25.000Z';
+      taskTime.task.title = 'Some title';
 
-  //     act(() => {
-  //       fireEvent.click(taskEntriesButton);
-  //     });
+      const tasksByDay: Array<GetPaginatedTaskTime> = [taskTime, taskTime];
 
-  //     const taskTimeEntryContainersAfterClick = await screen.findAllByTestId(
-  //       TEST_IDS.TASK_ENTRIES_CONTAINER,
-  //     );
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: tasksByDay,
+        isLastPage: true,
+      });
 
-  //     expect(taskTimeEntryContainersAfterClick).toHaveLength(2);
-  //     expect(getStringTimeFromDateString).toHaveBeenCalledTimes(6);
-  //     expect(getTotalTimeSpentFromTaskEntry).toHaveBeenCalledTimes(2);
-  //   });
-  // });
+      render(<TaskList />);
+
+      const taskEntriesButton = await screen.findByRole('button', { name: '2' });
+      const taskTimeTaskContainerBeforeClick = await screen.findAllByTestId(
+        TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
+      );
+      const taskTimeEntryContainersBeforeClick = screen.queryAllByTestId(
+        TEST_IDS.TASK_ENTRIES_CONTAINER,
+      );
+
+      expect(taskTimeTaskContainerBeforeClick).toHaveLength(1);
+      expect(taskTimeEntryContainersBeforeClick).toHaveLength(0);
+
+      act(() => {
+        fireEvent.click(taskEntriesButton);
+      });
+
+      const taskTimeEntryContainersAfterClick = await screen.findAllByTestId(
+        TEST_IDS.TASK_ENTRIES_CONTAINER,
+      );
+      const taskTimeTaskContainerAfterClick = await screen.findAllByTestId(
+        TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
+      );
+
+      expect(taskTimeTaskContainerAfterClick).toHaveLength(1);
+      expect(taskTimeEntryContainersAfterClick).toHaveLength(2);
+    });
+  });
+
+  describe('renderTaskNumberOfEntries tests', () => {
+    it('Render a day with one task with only one entry without entries button correctly', async () => {
+      const taskTime = getTaskTimeToMock();
+
+      taskTime.endedAt = '2025-01-07T07:20:27.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:25.000Z';
+      taskTime.task.title = 'Some title';
+
+      const tasksByDay: Array<GetPaginatedTaskTime> = [taskTime];
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: tasksByDay,
+        isLastPage: true,
+      });
+
+      render(<TaskList />);
+
+      const taskEntriesButton = screen.queryByRole('button', { name: '1' });
+      const taskTimeTaskContainerBeforeClick = await screen.findAllByTestId(
+        TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
+      );
+
+      expect(taskTimeTaskContainerBeforeClick).toHaveLength(1);
+      expect(taskEntriesButton).not.toBeInTheDocument();
+    });
+
+    it('Render a day of task with one task with two entries with entry button corectly', async () => {
+      const taskTime = getTaskTimeToMock();
+
+      taskTime.endedAt = '2025-01-07T07:20:27.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:25.000Z';
+      taskTime.task.title = 'Some title';
+
+      const tasksByDay: Array<GetPaginatedTaskTime> = [taskTime, taskTime];
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: tasksByDay,
+        isLastPage: true,
+      });
+
+      render(<TaskList />);
+
+      const taskEntriesButton = await screen.findByRole('button', { name: '2' });
+      const taskTimeTaskContainerBeforeClick = await screen.findAllByTestId(
+        TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
+      );
+
+      expect(taskTimeTaskContainerBeforeClick).toHaveLength(1);
+      expect(taskEntriesButton).toBeInTheDocument();
+    });
+  });
+
+  function getTaskTimeToMock() {
+    const task: GetPaginatedTask = {
+      description: '',
+      id: 1,
+      link: '',
+      title: '',
+    };
+    const taskTime: GetPaginatedTaskTime = {
+      endedAt: '',
+      id: 1,
+      initiatedAt: '',
+      task: task,
+      totalTimeSpent: 0,
+    };
+
+    return taskTime;
+  }
 });
