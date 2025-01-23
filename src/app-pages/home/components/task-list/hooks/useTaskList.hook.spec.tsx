@@ -14,22 +14,131 @@ describe('useTaskList hook tests', () => {
     jest.useRealTimers();
   });
 
+  describe('getTotalTimeSpentFromTaskEntry tests', () => {
+    it('Return total time spent from one entry with less than ten seconds should have zero on seconds from task', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 9;
+
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
+        taskTime.totalTimeSpent,
+      );
+
+      expect(totalTimeSpentFromEntry).toBe(`00:00:0${taskTime.totalTimeSpent}`);
+    });
+
+    it('Return total time spent from one entry with less than one minute from task', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 40;
+
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
+        taskTime.totalTimeSpent,
+      );
+
+      expect(totalTimeSpentFromEntry).toBe(`00:00:${taskTime.totalTimeSpent}`);
+    });
+
+    it('Return total time spent from one entry with less than ten minutes should have zero on minutes from task', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 100;
+
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
+        taskTime.totalTimeSpent,
+      );
+
+      expect(totalTimeSpentFromEntry).toBe('00:01:40');
+    });
+
+    it('Return total time spent from one entry with less than one hour from task', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 601;
+
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
+        taskTime.totalTimeSpent,
+      );
+
+      expect(totalTimeSpentFromEntry).toBe('00:10:01');
+    });
+
+    it('Return total time spent from one entry with less than ten hours should have zero on hours from task', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 3600;
+
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
+        taskTime.totalTimeSpent,
+      );
+
+      expect(totalTimeSpentFromEntry).toBe('01:00:00');
+    });
+
+    it('Return total time spent from one entry with hour, minutes and seconds', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 3661;
+
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
+        taskTime.totalTimeSpent,
+      );
+
+      expect(totalTimeSpentFromEntry).toBe('01:01:01');
+    });
+  });
+
+  describe('getTotalTimeSpentFromTask tests', () => {
+    it('Return total time spent from a day with one task', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 60;
+
+      const taskByDay = [taskTime];
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTask(taskByDay);
+
+      expect(totalTimeSpentFromEntry).toBe('00:01:00');
+    });
+
+    it('Return total time spent from a day with two tasks and total time with minutes', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 300;
+
+      const taskByDay = [taskTime, taskTime];
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTask(taskByDay);
+
+      expect(totalTimeSpentFromEntry).toBe('00:10:00');
+    });
+
+    it('Return total time spent from a day with three tasks and total time with hours, minutes and seconds', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 1221;
+
+      const taskByDay = [taskTime, taskTime, taskTime];
+      const { result } = renderHook(() => useTaskList());
+      const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTask(taskByDay);
+
+      expect(totalTimeSpentFromEntry).toBe('01:01:03');
+    });
+  });
+
   describe('getTotalTimeSpentFromDay tests', () => {
-    it('Return total time spent from a day based on task times entries with one task', () => {
-      const task: GetPaginatedTask = {
-        description: '',
-        id: 1,
-        link: '',
-        title: '',
-      };
-      const taskTime: GetPaginatedTaskTime = {
-        endedAt: '',
-        id: 1,
-        initiatedAt: '',
-        task: task,
-        totalTimeSpent: 60,
-      };
-      const dayTask: Array<GetPaginatedTaskTime> = [taskTime];
+    it('Return total time spent from a day based on task times entries with one day', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 60;
+
+      const dayTask: Array<Array<GetPaginatedTaskTime>> = [[taskTime]];
       const { result } = renderHook(() => useTaskList());
 
       const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
@@ -37,21 +146,12 @@ describe('useTaskList hook tests', () => {
       expect(totalTimeSpent).toBe('00:01:00');
     });
 
-    it('Return total time spent from a day based on task times entries with three tasks', () => {
-      const task: GetPaginatedTask = {
-        description: '',
-        id: 1,
-        link: '',
-        title: '',
-      };
-      const taskTime: GetPaginatedTaskTime = {
-        endedAt: '',
-        id: 1,
-        initiatedAt: '',
-        task: task,
-        totalTimeSpent: 60,
-      };
-      const dayTask: Array<GetPaginatedTaskTime> = [taskTime, taskTime, taskTime];
+    it('Return total time spent from a day based on task times entries with two days', () => {
+      const taskTime = getTaskTimeMock();
+
+      taskTime.totalTimeSpent = 60;
+
+      const dayTask: Array<Array<GetPaginatedTaskTime>> = [[taskTime, taskTime], [taskTime]];
       const { result } = renderHook(() => useTaskList());
 
       const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
@@ -101,6 +201,53 @@ describe('useTaskList hook tests', () => {
     });
   });
 
+  describe('getIsOpenedTaskEntries tests', () => {
+    it('Return that a task is opened', async () => {
+      const { result } = renderHook(() => useTaskList());
+      const taskId: number = 1;
+
+      await waitFor(() => {
+        result.current.handleClickShowTaskEntries(taskId);
+
+        const isOpened: boolean = result.current.getIsOpenedTaskEntries(taskId);
+
+        expect(isOpened).toBe(true);
+      });
+    });
+
+    it('Return that a task is closed', () => {
+      const { result } = renderHook(() => useTaskList());
+      const taskId: number = 1;
+      const isOpened: boolean = result.current.getIsOpenedTaskEntries(taskId);
+
+      expect(isOpened).toBe(false);
+    });
+
+    it('Return that a task is closed after it been opened', async () => {
+      const { result } = renderHook(() => useTaskList());
+      const taskId: number = 1;
+      let isOpened: boolean = result.current.getIsOpenedTaskEntries(taskId);
+
+      expect(isOpened).toBe(false);
+
+      await waitFor(() => {
+        result.current.handleClickShowTaskEntries(taskId);
+
+        isOpened = result.current.getIsOpenedTaskEntries(taskId);
+
+        expect(isOpened).toBe(true);
+      });
+
+      await waitFor(() => {
+        result.current.handleClickShowTaskEntries(taskId);
+
+        isOpened = result.current.getIsOpenedTaskEntries(taskId);
+
+        expect(isOpened).toBe(false);
+      });
+    });
+  });
+
   describe('handleLoadMoreClick tests', () => {
     it('Change page when clicked', () => {
       const { result } = renderHook(() => useTaskList());
@@ -117,31 +264,19 @@ describe('useTaskList hook tests', () => {
   });
 
   describe('useEffect tests', () => {
-    it('Group tasks by day with success', async () => {
+    it('Group tasks by day with two tasks in tow days with success', async () => {
       const endedAtTaskOne: string = '2025-01-16T10:00:00';
       const endedAtTaskTwo: string = '2025-01-15T10:00:00';
-      const task: GetPaginatedTask = {
-        description: '',
-        id: 1,
-        link: '',
-        title: '',
-      };
-      const taskTimeOne: GetPaginatedTaskTime = {
-        endedAt: endedAtTaskOne,
-        id: 1,
-        initiatedAt: '',
-        task: task,
-        totalTimeSpent: 60,
-      };
-      const taskTimeTwo: GetPaginatedTaskTime = {
-        endedAt: endedAtTaskTwo,
-        id: 1,
-        initiatedAt: '',
-        task: task,
-        totalTimeSpent: 60,
-      };
+      const taskTime = getTaskTimeMock();
 
-      const taskTimes: Array<GetPaginatedTaskTime> = [taskTimeOne, taskTimeTwo];
+      taskTime.endedAt = endedAtTaskOne;
+
+      const taskTimeTwo = getTaskTimeMock();
+
+      taskTimeTwo.endedAt = endedAtTaskTwo;
+      taskTimeTwo.id = 2;
+
+      const taskTimes: Array<GetPaginatedTaskTime> = [taskTime, taskTimeTwo];
 
       jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
         taskTimes: taskTimes,
@@ -151,11 +286,59 @@ describe('useTaskList hook tests', () => {
       const { result } = renderHook(() => useTaskList());
 
       await waitFor(() => {
-        const resultTasks: Array<Array<GetPaginatedTaskTime>> = result.current.tasksByDay;
+        const resultTasks: Array<Array<Array<GetPaginatedTaskTime>>> = result.current.tasksByDay;
 
-        expect(resultTasks[0][0].endedAt).toBe(endedAtTaskOne);
-        expect(resultTasks[1][0].endedAt).toBe(endedAtTaskTwo);
+        expect(resultTasks[0][0][0].id).toBe(taskTime.id);
+        expect(resultTasks[1][0][0].id).toBe(taskTimeTwo.id);
+      });
+    });
+
+    it('Group tasks by day and by task with one day and two tasks with success', async () => {
+      const endedAtTaskOne: string = '2025-01-16T11:00:00';
+      const endedAtTaskTwo: string = '2025-01-16T10:00:00';
+      const taskTime = getTaskTimeMock();
+
+      taskTime.endedAt = endedAtTaskOne;
+
+      const taskTimeTwo = getTaskTimeMock();
+
+      taskTimeTwo.endedAt = endedAtTaskTwo;
+      taskTimeTwo.task.id = 2;
+      taskTime.id = 2;
+
+      const taskTimes: Array<GetPaginatedTaskTime> = [taskTime, taskTimeTwo];
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: taskTimes,
+        isLastPage: true,
+      });
+
+      const { result } = renderHook(() => useTaskList());
+
+      await waitFor(() => {
+        const resultTasks: Array<Array<Array<GetPaginatedTaskTime>>> = result.current.tasksByDay;
+
+        expect(resultTasks[0][0][0].id).toBe(taskTime.id);
+        expect(resultTasks[0][1][0].id).toBe(taskTimeTwo.id);
       });
     });
   });
+
+  function getTaskTimeMock() {
+    const task: GetPaginatedTask = {
+      description: '',
+      id: 1,
+      link: '',
+      title: '',
+    };
+    const taskTime: GetPaginatedTaskTime = {
+      endedAt: '',
+      id: 1,
+      initiatedAt: '',
+      task: task,
+      totalTimeSpent: 60,
+    };
+
+    return taskTime;
+  }
 });

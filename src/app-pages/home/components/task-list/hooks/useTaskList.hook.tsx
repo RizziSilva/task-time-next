@@ -1,32 +1,40 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { GetPaginatedTaskTime, GetPaginatedTaskTimesRequest, Times } from '@types';
+import { GetPaginatedTaskTime, GetPaginatedTaskTimesRequest, TaskTime, Times } from '@types';
 import { getPaginatedTaskTimes } from '@services';
 import { getErrorMessage, getFormmatedTimesFromSeconds } from '@utils';
 import { GET_TASK_TIMES_ERROR_MESSAGE } from '../../../constants';
 
 export function useTaskList() {
-  const [tasksByDay, setTasksByDay] = useState<Array<Array<GetPaginatedTaskTime>>>([]);
+  const [tasksByDay, setTasksByDay] = useState<Array<Array<Array<GetPaginatedTaskTime>>>>([]);
   const [page, setPage] = useState<number>(1);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
+  const [taskToShowTimes, setTaskToShowTimes] = useState<Array<number>>([]);
 
   useEffect(() => {
     function groupTaskByDay(taskTimes: Array<GetPaginatedTaskTime>) {
       const groupedTaskTimes = taskTimes.reduce(
-        (acc: Record<string, Array<GetPaginatedTaskTime>>, taskTime) => {
+        (acc: Record<string, Array<Array<GetPaginatedTaskTime>>>, taskTime) => {
           const datetime: Date = new Date(taskTime.endedAt);
           const dateAsString: string = datetime.toLocaleDateString();
-          const alreadyHasKey: boolean = !!acc[dateAsString];
+          const alreadyHasDayKey: boolean = !!acc[dateAsString];
 
-          if (!alreadyHasKey) acc[dateAsString] = [];
+          if (!alreadyHasDayKey) acc[dateAsString] = [];
 
-          acc[dateAsString].push(taskTime);
+          const taskEntries = acc[dateAsString].find((tasks) =>
+            tasks.some(({ task }) => task.id === taskTime.task.id),
+          );
+
+          if (!taskEntries) acc[dateAsString].push([taskTime]);
+          else taskEntries.push(taskTime);
 
           return acc;
         },
         {},
       );
-      const groupedAsArray: Array<Array<GetPaginatedTaskTime>> = Object.values(groupedTaskTimes);
+
+      const groupedAsArray: Array<Array<Array<GetPaginatedTaskTime>>> =
+        Object.values(groupedTaskTimes);
 
       setTasksByDay(groupedAsArray);
     }
@@ -54,6 +62,21 @@ export function useTaskList() {
     setPage(page + 1);
   }
 
+  function handleClickShowTaskEntries(taskId: number) {
+    const currentOpenedTasks: Array<number> = [...taskToShowTimes];
+    const indexOfClickedTask: number = currentOpenedTasks.indexOf(taskId);
+    const isTaskAlreadyOpened: boolean = indexOfClickedTask !== -1;
+
+    if (isTaskAlreadyOpened) currentOpenedTasks.splice(indexOfClickedTask, 1);
+    else currentOpenedTasks.push(taskId);
+
+    setTaskToShowTimes(currentOpenedTasks);
+  }
+
+  function getIsOpenedTaskEntries(taskId: number): boolean {
+    return taskToShowTimes.includes(taskId);
+  }
+
   function getFormattedDayString(day: string): string {
     const date: Date = new Date(day);
     const dayString: string = date.toLocaleDateString('pt-BR', {
@@ -74,8 +97,23 @@ export function useTaskList() {
     return `${hours}:${minutes}`;
   }
 
-  function getTotalTimeSpentFromDay(dayTaskTimes: Array<GetPaginatedTaskTime>): string {
+  function getTotalTimeSpentFromDay(dayTaskTimes: Array<Array<GetPaginatedTaskTime>>): string {
     const totalTimeSpentInSeconds: number = dayTaskTimes.reduce(
+      (dayAcc: number, taskTimes: Array<GetPaginatedTaskTime>) => {
+        return taskTimes.reduce(
+          (taskAcc: number, taskTime: GetPaginatedTaskTime) => taskAcc + taskTime.totalTimeSpent,
+          dayAcc,
+        );
+      },
+      0,
+    );
+    const totalTimeSpentInValues: Times = getFormmatedTimesFromSeconds(totalTimeSpentInSeconds);
+
+    return `${totalTimeSpentInValues.hours}:${totalTimeSpentInValues.minutes}:${totalTimeSpentInValues.seconds}`;
+  }
+
+  function getTotalTimeSpentFromTask(taskTaskTimes: Array<GetPaginatedTaskTime>): string {
+    const totalTimeSpentInSeconds: number = taskTaskTimes.reduce(
       (acc: number, taskTime: GetPaginatedTaskTime) => acc + taskTime.totalTimeSpent,
       0,
     );
@@ -84,13 +122,23 @@ export function useTaskList() {
     return `${totalTimeSpentInValues.hours}:${totalTimeSpentInValues.minutes}:${totalTimeSpentInValues.seconds}`;
   }
 
+  function getTotalTimeSpentFromTaskEntry(totalSpent: number): string {
+    const totalTimeSpentInValues: Times = getFormmatedTimesFromSeconds(totalSpent);
+
+    return `${totalTimeSpentInValues.hours}:${totalTimeSpentInValues.minutes}:${totalTimeSpentInValues.seconds}`;
+  }
+
   return {
     tasksByDay,
     isLastPage,
+    page,
     handleLoadMoreClick,
     getFormattedDayString,
     getStringTimeFromDateString,
     getTotalTimeSpentFromDay,
-    page,
+    getTotalTimeSpentFromTask,
+    handleClickShowTaskEntries,
+    getTotalTimeSpentFromTaskEntry,
+    getIsOpenedTaskEntries,
   };
 }
