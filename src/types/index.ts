@@ -18,4 +18,6 @@ export type {
   GetPaginatedTaskTime,
   GroupedByDayTaskTimes,
   GetPaginatedTask,
+  CreateTaskTimeRequest,
+  CreateTaskTimeResponse,
 } from './task-time';

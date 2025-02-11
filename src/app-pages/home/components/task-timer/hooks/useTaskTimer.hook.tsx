@@ -1,11 +1,23 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Task } from '@/types';
 import { FIELD_KEYS, INITIAL_TASK_STATE } from '../../../constants';
-import { UseTaskTimer } from '../types';
+import { UseTaskTimer, UseTaskTimerProps } from '../types';
 
-export function useTaskTimer(): UseTaskTimer {
+export function useTaskTimer({ replayTask }: UseTaskTimerProps): UseTaskTimer {
   const [task, setTask] = useState<Task>(INITIAL_TASK_STATE);
   const [isAdditionalInfoOpen, setIsAdditionalInfoOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    function handleReplayTask() {
+      if (replayTask) {
+        setTask(replayTask);
+
+        onTimerStart();
+      }
+    }
+
+    handleReplayTask();
+  }, [replayTask]);
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
     const { name, value } = event.target;
@@ -20,7 +32,7 @@ export function useTaskTimer(): UseTaskTimer {
   function onTimerStart() {
     const now = new Date();
 
-    setTask({ ...task, [FIELD_KEYS.INITIATED_AT]: now });
+    setTask((currentTask) => ({ ...currentTask, [FIELD_KEYS.INITIATED_AT]: now }));
   }
 
   function resetTask() {

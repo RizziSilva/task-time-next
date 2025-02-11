@@ -1,10 +1,12 @@
-import { CreateTaskResponse, Task } from '@/types';
+import { CreateTaskResponse, CreateTaskTimeResponse, Task } from '@/types';
 
 export interface TimerProps {
   onTaskCreation: (newTask: CreateTaskResponse) => void;
   task: Task;
   onTimerStart: () => void;
   resetTask: () => void;
+  replayTask: Task | null;
+  onTaskTimeCreation: (createdTaskTime: CreateTaskTimeResponse) => void;
 }
 
 export interface UseTimerProps {
@@ -12,6 +14,8 @@ export interface UseTimerProps {
   task: Task;
   onTimerStart: () => void;
   resetTask: () => void;
+  replayTask: Task | null;
+  onTaskTimeCreation: (createdTaskTime: CreateTaskTimeResponse) => void;
 }
 
 export interface UseTimer {

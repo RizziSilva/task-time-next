@@ -16,3 +16,13 @@ export interface GetPaginatedTaskTime {
 export interface GroupedByDayTaskTimes {
   [key: string]: GetPaginatedTaskTime;
 }
+
+export interface CreateTaskTimeResponse {
+  createdAt: string;
+  updatedAt: string;
+  initiatedAt: string;
+  endedAt: string;
+  taskId: number;
+  timeSpent: number;
+  id: number;
+}

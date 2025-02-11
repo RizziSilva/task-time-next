@@ -3,10 +3,14 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { PlayIcon, StopIcon } from '@statics';
-import { CreateTaskResponse, Task } from '@types';
-import { createTask } from '@services';
+import { CreateTaskResponse, CreateTaskTimeRequest, Task } from '@types';
+import { createTask, createTaskTime } from '@services';
 import { getErrorMessage, getFormmatedTimesFromSeconds } from '@utils';
-import { CREATE_TASK_ERROR_MESAGE, FIELD_KEYS } from '../../../constants';
+import {
+  CREATE_TASK_ERROR_MESSAGE,
+  CREATE_TASK_TIME_ERROR_MESSAGE,
+  FIELD_KEYS,
+} from '../../../constants';
 import { UseTimer, UseTimerProps } from '../types';
 
 export function useTimer({
@@ -14,6 +18,8 @@ export function useTimer({
   onTimerStart,
   resetTask,
   task,
+  replayTask,
+  onTaskTimeCreation,
 }: UseTimerProps): UseTimer {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
@@ -34,6 +40,16 @@ export function useTimer({
     };
   }, [isPlaying]);
 
+  useEffect(() => {
+    function startTimerOnReplayTask() {
+      const shoudlStartReplay: boolean = !isPlaying && !!replayTask;
+
+      if (shoudlStartReplay) handleTimerClick();
+    }
+
+    startTimerOnReplayTask();
+  }, [replayTask]);
+
   function getTimerToShow(): string {
     const values = getFormmatedTimesFromSeconds(timer);
 
@@ -53,7 +69,27 @@ export function useTimer({
     } catch (error) {
       console.error(error);
 
-      const errorMessage = getErrorMessage(error, CREATE_TASK_ERROR_MESAGE);
+      const errorMessage = getErrorMessage(error, CREATE_TASK_ERROR_MESSAGE);
+      toast.error(errorMessage);
+    }
+  }
+
+  async function createTaskTimeAction(task: Task) {
+    try {
+      const requestBody: CreateTaskTimeRequest = {
+        endedAt: task.endedAt as Date,
+        initiatedAt: task.initiatedAt as Date,
+        taskId: task.id as number,
+      };
+
+      const createdTaskTime = await createTaskTime(requestBody);
+
+      onTaskTimeCreation(createdTaskTime);
+      resetTask();
+    } catch (error) {
+      console.error(error);
+
+      const errorMessage: string = getErrorMessage(error, CREATE_TASK_TIME_ERROR_MESSAGE);
       toast.error(errorMessage);
     }
   }
@@ -61,7 +97,10 @@ export function useTimer({
   async function handleStop() {
     const now = new Date();
     const body = { ...task, [FIELD_KEYS.ENDED_AT]: now };
-    await createTaskAction(body);
+    const isReplayingTask: boolean = !!replayTask;
+
+    if (isReplayingTask) await createTaskTimeAction(body);
+    else await createTaskAction(body);
   }
 
   async function handleTimerClick() {

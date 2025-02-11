@@ -1,18 +1,51 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { GetPaginatedTaskTime, GetPaginatedTaskTimesRequest, TaskTime, Times } from '@types';
+import {
+  CreateTaskResponse,
+  CreateTaskTimeResponse,
+  GetPaginatedTask,
+  GetPaginatedTaskTime,
+  GetPaginatedTaskTimesRequest,
+  TaskTime,
+  Times,
+} from '@types';
 import { getPaginatedTaskTimes } from '@services';
 import { getErrorMessage, getFormmatedTimesFromSeconds } from '@utils';
-import { GET_TASK_TIMES_ERROR_MESSAGE } from '../../../constants';
+import {
+  CREATE_TASK_TIME_UPDATE_LIST_ERROR_MESSAGE,
+  GET_TASK_TIMES_ERROR_MESSAGE,
+} from '../../../constants';
+import { UseTaskListProps } from '../types';
 
-export function useTaskList() {
+export function useTaskList({ newTask, newTaskTime }: UseTaskListProps) {
   const [tasksByDay, setTasksByDay] = useState<Array<Array<Array<GetPaginatedTaskTime>>>>([]);
+  const [taskTimes, setTaskTimes] = useState<Array<GetPaginatedTaskTime>>([]);
   const [page, setPage] = useState<number>(1);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [taskToShowTimes, setTaskToShowTimes] = useState<Array<number>>([]);
 
   useEffect(() => {
-    function groupTaskByDay(taskTimes: Array<GetPaginatedTaskTime>) {
+    async function getTasks() {
+      try {
+        const params: GetPaginatedTaskTimesRequest = { page };
+        const data = await getPaginatedTaskTimes(params);
+
+        setTaskTimes([...taskTimes, ...data.taskTimes]);
+        setIsLastPage(data.isLastPage);
+      } catch (error) {
+        console.error(error);
+
+        const errorMessage: string = getErrorMessage(error, GET_TASK_TIMES_ERROR_MESSAGE);
+
+        toast.error(errorMessage);
+      }
+    }
+
+    getTasks();
+  }, [page]);
+
+  useEffect(() => {
+    function groupTaskByDay() {
       const groupedTaskTimes = taskTimes.reduce(
         (acc: Record<string, Array<Array<GetPaginatedTaskTime>>>, taskTime) => {
           const datetime: Date = new Date(taskTime.endedAt);
@@ -39,24 +72,24 @@ export function useTaskList() {
       setTasksByDay(groupedAsArray);
     }
 
-    async function getTasks() {
-      try {
-        const params: GetPaginatedTaskTimesRequest = { page };
-        const data = await getPaginatedTaskTimes(params);
+    groupTaskByDay();
+  }, [taskTimes]);
 
-        groupTaskByDay(data.taskTimes);
-        setIsLastPage(data.isLastPage);
-      } catch (error) {
-        console.error(error);
-
-        const errorMessage: string = getErrorMessage(error, GET_TASK_TIMES_ERROR_MESSAGE);
-
-        toast.error(errorMessage);
-      }
+  useEffect(() => {
+    function handleNewTask() {
+      if (newTask) updateListWithNewTask(newTask);
     }
 
-    getTasks();
-  }, [page]);
+    handleNewTask();
+  }, [newTask]);
+
+  useEffect(() => {
+    function handleNewTaskTime() {
+      if (newTaskTime) updateWithNewTaskTime(newTaskTime);
+    }
+
+    handleNewTaskTime();
+  }, [newTaskTime]);
 
   function handleLoadMoreClick() {
     setPage(page + 1);
@@ -126,6 +159,47 @@ export function useTaskList() {
     const totalTimeSpentInValues: Times = getFormmatedTimesFromSeconds(totalSpent);
 
     return `${totalTimeSpentInValues.hours}:${totalTimeSpentInValues.minutes}:${totalTimeSpentInValues.seconds}`;
+  }
+
+  function updateListWithNewTask(createdTask: CreateTaskResponse) {
+    const timeEntry: TaskTime = createdTask.times[0];
+    const { description, id, link, title } = createdTask;
+    const { endedAt, id: taskTimeId, initiatedAt, timeSpent } = timeEntry;
+    const task: GetPaginatedTask = {
+      description,
+      id,
+      link,
+      title,
+    };
+    const taskTime: GetPaginatedTaskTime = {
+      task,
+      endedAt,
+      initiatedAt,
+      id: taskTimeId,
+      totalTimeSpent: timeSpent,
+    };
+
+    setTaskTimes([...taskTimes, taskTime]);
+  }
+
+  function updateWithNewTaskTime(createdTaskTime: CreateTaskTimeResponse) {
+    const initialTask: GetPaginatedTaskTime | undefined = taskTimes.find(
+      ({ task }) => task.id === createdTaskTime.taskId,
+    );
+
+    if (!!initialTask) {
+      const { endedAt, id, initiatedAt, timeSpent } = createdTaskTime;
+      const task: GetPaginatedTask = initialTask.task;
+      const taskTime: GetPaginatedTaskTime = {
+        task,
+        endedAt,
+        id,
+        initiatedAt,
+        totalTimeSpent: timeSpent,
+      };
+
+      setTaskTimes([...taskTimes, taskTime]);
+    } else toast.error(CREATE_TASK_TIME_UPDATE_LIST_ERROR_MESSAGE);
   }
 
   return {
