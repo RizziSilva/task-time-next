@@ -25,7 +25,7 @@ describe('TaskList component tests', () => {
         isLastPage: true,
       });
 
-      render(<TaskList />);
+      render(<TaskList newTask={null} newTaskTime={null} onTaskReplay={() => {}} />);
 
       const taskDayContainer = await screen.findAllByTestId(TEST_IDS.TASK_LIST_DAY_CONTAINER);
       const taskTitleSpan = await screen.findByText(taskTime.task.title);
@@ -65,7 +65,7 @@ describe('TaskList component tests', () => {
         isLastPage: true,
       });
 
-      render(<TaskList />);
+      render(<TaskList newTask={null} newTaskTime={null} onTaskReplay={() => {}} />);
 
       const taskDayContainer = await screen.findAllByTestId(TEST_IDS.TASK_LIST_DAY_CONTAINER);
       const titleOne = await screen.findByText(taskTime.task.title);
@@ -94,7 +94,7 @@ describe('TaskList component tests', () => {
         isLastPage: true,
       });
 
-      render(<TaskList />);
+      render(<TaskList newTask={null} newTaskTime={null} onTaskReplay={() => {}} />);
 
       const taskTimeEntryContainer = await screen.findAllByTestId(
         TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
@@ -129,7 +129,7 @@ describe('TaskList component tests', () => {
         isLastPage: true,
       });
 
-      render(<TaskList />);
+      render(<TaskList newTask={null} newTaskTime={null} onTaskReplay={() => {}} />);
 
       const taskTimeEntryContainer = await screen.findAllByTestId(
         TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER,
@@ -140,6 +140,35 @@ describe('TaskList component tests', () => {
       expect(taskTimeEntryContainer).toHaveLength(2);
       expect(taskTitleSpan).toHaveLength(1);
       expect(taskTwoTitleSpan).toHaveLength(1);
+    });
+
+    it('Calls replay function on button click', async () => {
+      const taskTime = getTaskTimeToMock();
+
+      taskTime.endedAt = '2025-01-07T07:20:27.000Z';
+      taskTime.initiatedAt = '2025-01-07T07:20:25.000Z';
+      taskTime.task.title = 'Some title';
+
+      const tasksByDay: Array<GetPaginatedTaskTime> = [taskTime];
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: tasksByDay,
+        isLastPage: true,
+      });
+
+      const mockedReplayTaskFunction = jest.fn();
+
+      render(
+        <TaskList newTask={null} newTaskTime={null} onTaskReplay={mockedReplayTaskFunction} />,
+      );
+
+      const replayButton = await screen.findByTestId(TEST_IDS.REPLAY_BUTTON);
+
+      act(() => {
+        fireEvent.click(replayButton);
+      });
+
+      expect(mockedReplayTaskFunction).toHaveBeenCalledWith(taskTime.task);
     });
   });
 
@@ -158,7 +187,7 @@ describe('TaskList component tests', () => {
         isLastPage: true,
       });
 
-      render(<TaskList />);
+      render(<TaskList newTask={null} newTaskTime={null} onTaskReplay={() => {}} />);
 
       const taskEntriesButton = await screen.findByRole('button', { name: '2' });
       const taskTimeTaskContainerBeforeClick = await screen.findAllByTestId(
@@ -202,7 +231,7 @@ describe('TaskList component tests', () => {
         isLastPage: true,
       });
 
-      render(<TaskList />);
+      render(<TaskList newTask={null} newTaskTime={null} onTaskReplay={() => {}} />);
 
       const taskEntriesButton = screen.queryByRole('button', { name: '1' });
       const taskTimeTaskContainerBeforeClick = await screen.findAllByTestId(
@@ -227,7 +256,7 @@ describe('TaskList component tests', () => {
         isLastPage: true,
       });
 
-      render(<TaskList />);
+      render(<TaskList newTask={null} newTaskTime={null} onTaskReplay={() => {}} />);
 
       const taskEntriesButton = await screen.findByRole('button', { name: '2' });
       const taskTimeTaskContainerBeforeClick = await screen.findAllByTestId(

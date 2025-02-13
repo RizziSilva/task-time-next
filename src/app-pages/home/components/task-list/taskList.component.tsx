@@ -99,6 +99,7 @@ export function TaskList({ onTaskReplay, newTask, newTaskTime }: TaskListProps) 
                 {totalTimeSpentInTask}
               </span>
               <button
+                data-testid={TEST_IDS.REPLAY_BUTTON}
                 onClick={() => onTaskReplay(tasks[0].task)}
                 className='flex h-full w-7 cursor-pointer items-center justify-center opacity-50 hover:opacity-100'
               >

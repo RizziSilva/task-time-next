@@ -25,6 +25,22 @@ export function useTaskList({ newTask, newTaskTime }: UseTaskListProps) {
   const [taskToShowTimes, setTaskToShowTimes] = useState<Array<number>>([]);
 
   useEffect(() => {
+    function handleNewTask() {
+      if (newTask) updateListWithNewTask(newTask);
+    }
+
+    handleNewTask();
+  }, [newTask]);
+
+  useEffect(() => {
+    function handleNewTaskTime() {
+      if (newTaskTime) updateWithNewTaskTime(newTaskTime);
+    }
+
+    handleNewTaskTime();
+  }, [newTaskTime]);
+
+  useEffect(() => {
     async function getTasks() {
       try {
         const params: GetPaginatedTaskTimesRequest = { page };
@@ -74,22 +90,6 @@ export function useTaskList({ newTask, newTaskTime }: UseTaskListProps) {
 
     groupTaskByDay();
   }, [taskTimes]);
-
-  useEffect(() => {
-    function handleNewTask() {
-      if (newTask) updateListWithNewTask(newTask);
-    }
-
-    handleNewTask();
-  }, [newTask]);
-
-  useEffect(() => {
-    function handleNewTaskTime() {
-      if (newTaskTime) updateWithNewTaskTime(newTaskTime);
-    }
-
-    handleNewTaskTime();
-  }, [newTaskTime]);
 
   function handleLoadMoreClick() {
     setPage(page + 1);
@@ -179,7 +179,7 @@ export function useTaskList({ newTask, newTaskTime }: UseTaskListProps) {
       totalTimeSpent: timeSpent,
     };
 
-    setTaskTimes([...taskTimes, taskTime]);
+    setTaskTimes([taskTime, ...taskTimes]);
   }
 
   function updateWithNewTaskTime(createdTaskTime: CreateTaskTimeResponse) {
@@ -198,7 +198,7 @@ export function useTaskList({ newTask, newTaskTime }: UseTaskListProps) {
         totalTimeSpent: timeSpent,
       };
 
-      setTaskTimes([...taskTimes, taskTime]);
+      setTaskTimes([taskTime, ...taskTimes]);
     } else toast.error(CREATE_TASK_TIME_UPDATE_LIST_ERROR_MESSAGE);
   }
 
