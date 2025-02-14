@@ -90,6 +90,7 @@ export function useTimer({
       console.error(error);
 
       const errorMessage: string = getErrorMessage(error, CREATE_TASK_TIME_ERROR_MESSAGE);
+
       toast.error(errorMessage);
     }
   }
