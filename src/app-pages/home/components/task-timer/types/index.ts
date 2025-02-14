@@ -1,1 +1,1 @@
-export type { TaskTimerProps, UseTaskTimer } from './taskTimer.type';
+export type { TaskTimerProps, UseTaskTimer, UseTaskTimerProps } from './taskTimer.type';

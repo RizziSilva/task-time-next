@@ -1,8 +1,11 @@
-import { GetPaginatedTaskTime } from '@/types';
+import Image from 'next/image';
+import { GetPaginatedTaskTime } from '@types';
+import { TaskPlayIcon } from '@statics';
 import { useTaskList } from './hooks/useTaskList.hook';
 import { TEST_IDS } from '../../constants';
+import { TaskListProps } from './types';
 
-export function TaskList({}) {
+export function TaskList({ onTaskReplay, newTask, newTaskTime }: TaskListProps) {
   const {
     tasksByDay,
     getFormattedDayString,
@@ -12,7 +15,7 @@ export function TaskList({}) {
     handleClickShowTaskEntries,
     getTotalTimeSpentFromTaskEntry,
     getIsOpenedTaskEntries,
-  } = useTaskList();
+  } = useTaskList({ newTask, newTaskTime });
 
   function renderTaskNumberOfEntries(numberOfEntries: number, taskId: number) {
     if (numberOfEntries <= 1) return null;
@@ -80,7 +83,7 @@ export function TaskList({}) {
           <div
             key={id}
             data-testid={TEST_IDS.TASK_LIST_TASK_TIME_CONTAINER}
-            className={`${isOpened ? 'bg-task-hover' : ''} flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color pl-50px pr-20 hover:bg-task-hover`}
+            className={`${isOpened ? 'bg-task-hover' : ''} flex h-50px w-full items-center justify-between border-b-[1px] border-b-task-border-color pl-50px pr-[44px] hover:bg-task-hover`}
           >
             <div className='flex w-fit items-center justify-start'>
               {renderTaskNumberOfEntries(tasks.length, task.id)}
@@ -92,9 +95,16 @@ export function TaskList({}) {
               <span className='mr-10 flex h-full w-fit items-center text-sm font-semibold text-timer-input-placeholder-font-color'>
                 {initiatedAtString} - {endedAtString}
               </span>
-              <span className='flex h-full w-fit items-center text-sm font-semibold text-snuff-font-color'>
+              <span className='flex h-full w-fit items-center pr-2 text-sm font-semibold text-snuff-font-color'>
                 {totalTimeSpentInTask}
               </span>
+              <button
+                data-testid={TEST_IDS.REPLAY_BUTTON}
+                onClick={() => onTaskReplay(tasks[0].task)}
+                className='flex h-full w-7 cursor-pointer items-center justify-center opacity-50 hover:opacity-100'
+              >
+                <Image src={TaskPlayIcon} alt='Ícone de play.' />
+              </button>
             </div>
           </div>
           {renderTaskTimeEntries(tasks)}
@@ -110,7 +120,7 @@ export function TaskList({}) {
 
     return (
       <div
-        key={id}
+        key={`${id} ${initiatedAt}`}
         data-testid={TEST_IDS.TASK_LIST_DAY_CONTAINER}
         className='mb-8 flex w-full flex-col items-start justify-start bg-background-light'
       >

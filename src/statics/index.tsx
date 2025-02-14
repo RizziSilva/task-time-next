@@ -6,6 +6,7 @@ import SidebarCloseIcon from './icons/sidebar/close.svg';
 import ArrowDown from './icons/sidebar/arrow-down.svg';
 import PlayIcon from './icons/timer/play.svg';
 import StopIcon from './icons/timer/stop.svg';
+import TaskPlayIcon from './icons/timer/task-play.svg';
 
 export {
   FullLogo,
@@ -16,4 +17,5 @@ export {
   ArrowDown,
   PlayIcon,
   StopIcon,
+  TaskPlayIcon,
 };
