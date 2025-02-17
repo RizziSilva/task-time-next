@@ -8,7 +8,7 @@ import { useTaskTimer } from './hooks/useTaskTimer.hook';
 import { Timer } from '../timer/timer.component';
 import { TaskTimerProps } from './types';
 
-export function TaskTimer({ onTaskCreation }: TaskTimerProps) {
+export function TaskTimer({ onTaskCreation, replayTask, onTaskTimeCreation }: TaskTimerProps) {
   const {
     handleInputChange,
     task,
@@ -16,7 +16,7 @@ export function TaskTimer({ onTaskCreation }: TaskTimerProps) {
     handleAdditionalInfoButtonClick,
     isAdditionalInfoOpen,
     resetTask,
-  } = useTaskTimer();
+  } = useTaskTimer({ replayTask });
 
   function renderAdditionalFieldsButton() {
     return (
@@ -75,6 +75,8 @@ export function TaskTimer({ onTaskCreation }: TaskTimerProps) {
           task={task}
           onTimerStart={onTimerStart}
           resetTask={resetTask}
+          replayTask={replayTask}
+          onTaskTimeCreation={onTaskTimeCreation}
         />
         <div
           className={`${isAdditionalInfoOpen ? 'h-full' : 'h-0'} absolute top-[calc(theme(spacing.20)+2px)] flex  w-full flex-col transition-height duration-200 ease-in-out`}

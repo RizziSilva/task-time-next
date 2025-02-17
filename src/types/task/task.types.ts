@@ -23,6 +23,7 @@ export interface TaskTime {
   initiatedAt: string;
   endedAt: string;
   timeSpent: number;
+  id: number;
 }
 
 export interface Task {
@@ -31,6 +32,7 @@ export interface Task {
   link: string;
   initiatedAt: Date | undefined;
   endedAt: Date | undefined;
+  id?: number;
 }
 
 export interface CreateTaskResponse {

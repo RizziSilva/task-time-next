@@ -5,12 +5,21 @@ import { useTimer } from './hook/useTimer.hook';
 import { TimerProps } from './types';
 import { TEST_IDS } from '../../constants';
 
-export function Timer({ onTaskCreation, task, onTimerStart, resetTask }: TimerProps) {
+export function Timer({
+  onTaskCreation,
+  task,
+  onTimerStart,
+  resetTask,
+  replayTask,
+  onTaskTimeCreation,
+}: TimerProps) {
   const { getButtonIcon, handleTimerClick, getTimerToShow } = useTimer({
     onTaskCreation,
     task,
     onTimerStart,
     resetTask,
+    replayTask,
+    onTaskTimeCreation,
   });
 
   function renderPlayStopButton() {

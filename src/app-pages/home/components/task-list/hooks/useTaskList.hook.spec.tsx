@@ -1,9 +1,29 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { toast } from 'react-toastify';
 import * as services from '@services';
-import { GetPaginatedTask, GetPaginatedTaskTime } from '@types';
+import {
+  CreateTaskResponse,
+  CreateTaskTimeResponse,
+  GetPaginatedTask,
+  GetPaginatedTaskTime,
+  TaskTime,
+} from '@types';
 import { useTaskList } from './useTaskList.hook';
+import {
+  CREATE_TASK_TIME_UPDATE_LIST_ERROR_MESSAGE,
+  GET_TASK_TIMES_ERROR_MESSAGE,
+} from '@/app-pages/home/constants';
 
 jest.mock('@services');
+
+jest.mock('react-toastify', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+  },
+}));
 
 describe('useTaskList hook tests', () => {
   beforeAll(() => {
@@ -20,7 +40,7 @@ describe('useTaskList hook tests', () => {
 
       taskTime.totalTimeSpent = 9;
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
         taskTime.totalTimeSpent,
       );
@@ -33,7 +53,7 @@ describe('useTaskList hook tests', () => {
 
       taskTime.totalTimeSpent = 40;
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
         taskTime.totalTimeSpent,
       );
@@ -46,7 +66,7 @@ describe('useTaskList hook tests', () => {
 
       taskTime.totalTimeSpent = 100;
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
         taskTime.totalTimeSpent,
       );
@@ -59,7 +79,7 @@ describe('useTaskList hook tests', () => {
 
       taskTime.totalTimeSpent = 601;
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
         taskTime.totalTimeSpent,
       );
@@ -72,7 +92,7 @@ describe('useTaskList hook tests', () => {
 
       taskTime.totalTimeSpent = 3600;
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
         taskTime.totalTimeSpent,
       );
@@ -85,7 +105,7 @@ describe('useTaskList hook tests', () => {
 
       taskTime.totalTimeSpent = 3661;
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTaskEntry(
         taskTime.totalTimeSpent,
       );
@@ -101,7 +121,7 @@ describe('useTaskList hook tests', () => {
       taskTime.totalTimeSpent = 60;
 
       const taskByDay = [taskTime];
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTask(taskByDay);
 
       expect(totalTimeSpentFromEntry).toBe('00:01:00');
@@ -113,7 +133,7 @@ describe('useTaskList hook tests', () => {
       taskTime.totalTimeSpent = 300;
 
       const taskByDay = [taskTime, taskTime];
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTask(taskByDay);
 
       expect(totalTimeSpentFromEntry).toBe('00:10:00');
@@ -125,7 +145,7 @@ describe('useTaskList hook tests', () => {
       taskTime.totalTimeSpent = 1221;
 
       const taskByDay = [taskTime, taskTime, taskTime];
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const totalTimeSpentFromEntry = result.current.getTotalTimeSpentFromTask(taskByDay);
 
       expect(totalTimeSpentFromEntry).toBe('01:01:03');
@@ -139,7 +159,7 @@ describe('useTaskList hook tests', () => {
       taskTime.totalTimeSpent = 60;
 
       const dayTask: Array<Array<GetPaginatedTaskTime>> = [[taskTime]];
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
 
       const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
 
@@ -152,7 +172,7 @@ describe('useTaskList hook tests', () => {
       taskTime.totalTimeSpent = 60;
 
       const dayTask: Array<Array<GetPaginatedTaskTime>> = [[taskTime, taskTime], [taskTime]];
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
 
       const totalTimeSpent = result.current.getTotalTimeSpentFromDay(dayTask);
 
@@ -166,7 +186,7 @@ describe('useTaskList hook tests', () => {
 
       const date: Date = new Date();
       const mockDate: string = date.toUTCString();
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
 
       const stringResult = result.current.getStringTimeFromDateString(mockDate);
       const expected: string = `${date.getHours()}:${date.getMinutes()}`;
@@ -179,7 +199,7 @@ describe('useTaskList hook tests', () => {
 
       const date: Date = new Date();
       const mockDate: string = date.toUTCString();
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
 
       const stringResult = result.current.getStringTimeFromDateString(mockDate);
       const expected: string = `0${date.getHours()}:0${date.getMinutes()}`;
@@ -193,7 +213,7 @@ describe('useTaskList hook tests', () => {
       jest.useFakeTimers().setSystemTime(new Date('2025-01-16T10:00:00'));
       const date: Date = new Date();
       const mockDate: string = date.toUTCString();
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
 
       const stringResult = result.current.getFormattedDayString(mockDate);
 
@@ -203,7 +223,7 @@ describe('useTaskList hook tests', () => {
 
   describe('getIsOpenedTaskEntries tests', () => {
     it('Return that a task is opened', async () => {
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const taskId: number = 1;
 
       await waitFor(() => {
@@ -216,7 +236,7 @@ describe('useTaskList hook tests', () => {
     });
 
     it('Return that a task is closed', () => {
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const taskId: number = 1;
       const isOpened: boolean = result.current.getIsOpenedTaskEntries(taskId);
 
@@ -224,7 +244,7 @@ describe('useTaskList hook tests', () => {
     });
 
     it('Return that a task is closed after it been opened', async () => {
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const taskId: number = 1;
       let isOpened: boolean = result.current.getIsOpenedTaskEntries(taskId);
 
@@ -250,7 +270,7 @@ describe('useTaskList hook tests', () => {
 
   describe('handleLoadMoreClick tests', () => {
     it('Change page when clicked', () => {
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
       const initialPage: number = result.current.page;
 
       expect(initialPage).toBe(1);
@@ -283,7 +303,7 @@ describe('useTaskList hook tests', () => {
         isLastPage: true,
       });
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
 
       await waitFor(() => {
         const resultTasks: Array<Array<Array<GetPaginatedTaskTime>>> = result.current.tasksByDay;
@@ -313,7 +333,7 @@ describe('useTaskList hook tests', () => {
         isLastPage: true,
       });
 
-      const { result } = renderHook(() => useTaskList());
+      const { result } = renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
 
       await waitFor(() => {
         const resultTasks: Array<Array<Array<GetPaginatedTaskTime>>> = result.current.tasksByDay;
@@ -322,7 +342,195 @@ describe('useTaskList hook tests', () => {
         expect(resultTasks[0][1][0].id).toBe(taskTimeTwo.id);
       });
     });
+
+    it('It show default error message when request fails', async () => {
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockRejectedValue(new Error());
+
+      renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(GET_TASK_TIMES_ERROR_MESSAGE);
+      });
+    });
+
+    it('It show error message when request fails', async () => {
+      const errorMessage: string = 'Some error message';
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockRejectedValue(new Error(errorMessage));
+
+      renderHook(() => useTaskList({ newTask: null, newTaskTime: null }));
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(errorMessage);
+      });
+    });
   });
+
+  describe('updateListWithNewTask tests', () => {
+    it('Update list with new created task on list first place', async () => {
+      const tomorrow: Date = new Date();
+      const today: Date = new Date();
+
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const endedAtTaskOne: string = today.toISOString();
+      const taskTime = getTaskTimeMock();
+      const taskTimes: Array<GetPaginatedTaskTime> = [taskTime];
+      const newTask: CreateTaskResponse = getCreatedTaskMock();
+
+      taskTime.endedAt = endedAtTaskOne;
+      newTask.times[0].endedAt = tomorrow.toISOString();
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: taskTimes,
+        isLastPage: true,
+      });
+
+      const { result, rerender } = renderHook(
+        ({ newTask, newTaskTime }) => useTaskList({ newTask, newTaskTime }),
+        { initialProps: { newTask: null, newTaskTime: null } },
+      );
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay[0][0][0].id).toBe(taskTime.id);
+      });
+
+      rerender({ newTask });
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay[0][0][0].id).toBe(newTask.times[0].id);
+      });
+    });
+
+    it('Update list with new created task when list is empty', async () => {
+      const tomorrow: Date = new Date();
+
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const taskTimes: Array<GetPaginatedTaskTime> = [];
+      const newTask: CreateTaskResponse = getCreatedTaskMock();
+
+      newTask.times[0].endedAt = tomorrow.toISOString();
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: taskTimes,
+        isLastPage: true,
+      });
+
+      const { result, rerender } = renderHook(
+        ({ newTask, newTaskTime }) => useTaskList({ newTask, newTaskTime }),
+        { initialProps: { newTask: null, newTaskTime: null } },
+      );
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay.length).toBe(0);
+      });
+
+      rerender({ newTask });
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay.length).toBe(1);
+        expect(result.current.tasksByDay[0][0][0].id).toBe(newTask.times[0].id);
+      });
+    });
+  });
+
+  describe('updateWithNewTaskTime tests', () => {
+    it('Update list with new task time entry', async () => {
+      const taskTime: GetPaginatedTaskTime = getTaskTimeMock();
+      const taskTimes: Array<GetPaginatedTaskTime> = [taskTime];
+      const newTaskTime: CreateTaskTimeResponse = getCreatedTaskTimeMock();
+
+      newTaskTime.taskId = taskTime.task.id;
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: taskTimes,
+        isLastPage: true,
+      });
+
+      const { result, rerender } = renderHook(
+        ({ newTask, newTaskTime }) => useTaskList({ newTask, newTaskTime }),
+        { initialProps: { newTask: null, newTaskTime: null } },
+      );
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay[0][0][0].id).toBe(taskTime.id);
+      });
+
+      rerender({ newTaskTime });
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay[0][0][0].id).toBe(newTaskTime.id);
+      });
+    });
+
+    it('Try too update list with new task time entry without correct task id throws error', async () => {
+      const taskTime: GetPaginatedTaskTime = getTaskTimeMock();
+      const taskTimes: Array<GetPaginatedTaskTime> = [taskTime];
+      const newTaskTime: CreateTaskTimeResponse = getCreatedTaskTimeMock();
+
+      newTaskTime.taskId = 999;
+
+      jest.spyOn(services, 'getPaginatedTaskTimes').mockResolvedValue({
+        taskTimes: taskTimes,
+        isLastPage: true,
+      });
+
+      const { result, rerender } = renderHook(
+        ({ newTask, newTaskTime }) => useTaskList({ newTask, newTaskTime }),
+        { initialProps: { newTask: null, newTaskTime: null } },
+      );
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay[0][0][0].id).toBe(taskTime.id);
+      });
+
+      rerender({ newTaskTime });
+
+      await waitFor(() => {
+        expect(result.current.tasksByDay[0][0].length).toBe(1);
+        expect(toast.error).toHaveBeenCalledWith(CREATE_TASK_TIME_UPDATE_LIST_ERROR_MESSAGE);
+      });
+    });
+  });
+
+  function getCreatedTaskTimeMock() {
+    const taskTime: CreateTaskTimeResponse = {
+      createdAt: '',
+      endedAt: '',
+      id: 2,
+      initiatedAt: '',
+      taskId: 1,
+      timeSpent: 100,
+      updatedAt: '',
+    };
+
+    return taskTime;
+  }
+
+  function getCreatedTaskMock() {
+    const today: Date = new Date();
+    const taskTime: TaskTime = {
+      createdAt: '',
+      endedAt: today.toISOString(),
+      id: 10,
+      initiatedAt: '',
+      timeSpent: 100,
+      updatedAt: '',
+    };
+    const createdTask: CreateTaskResponse = {
+      createdAt: today.toISOString(),
+      id: 10,
+      description: '',
+      link: '',
+      times: [taskTime],
+      title: '',
+      totalTimeSpent: 100,
+      updatedAt: '',
+    };
+
+    return createdTask;
+  }
 
   function getTaskTimeMock() {
     const task: GetPaginatedTask = {
