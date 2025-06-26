@@ -24,7 +24,7 @@ export function Button({ text, type, onClick, className, shouldUseLoading }: But
       type={type}
       onClick={onClick}
       data-testid={TEST_IDS.DEFAULT_BUTTON}
-      className={`${isLoading ? 'cursor-wait opacity-50' : ''} ${className} flex h-8 w-full items-center justify-center rounded-2xl bg-red-base text-white hover:bg-red-darken`}
+      className={`${isLoading ? 'cursor-wait opacity-50' : ''} ${className} bg-button-base-background-color hover:bg-button-base-background-color-darken flex h-8 w-full items-center justify-center rounded-2xl text-white`}
     >
       {renderButtonContent()}
     </button>

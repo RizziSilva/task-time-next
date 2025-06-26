@@ -1,3 +1,4 @@
 export { LoginPage } from './login/login.page';
 export { HomePage } from './home/home.page';
 export { CreateUserPage } from './create-user/createUser.page';
+export { ProfilePage } from './profile/profile.page';
